@@ -1,5 +1,27 @@
 # Release Notes
 
+## v0.4.6 - 2026-10-30
+
+面向学员的正式补丁：补全新会话交接信息，并提供下载、安装、升级、首跑、反馈和回退的短路径。
+
+Release: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6>
+
+### Changed
+
+- Next Prompt 携带已确认任务事实、Acceptance、当前所需产物和未知项；保留六段输出和 13 个 State 字段。
+- 明确当前 Owner 回复、示例/模拟回复、草稿推进及 Gate 2 / Gate 3 的区别；新会话可继续生成当前请求的草稿。
+- 中文学员入口、Codex / Claude Code 安装说明及其他工具的手动加载路径。
+- 安装到明确的新目录；升级备份移出技能扫描目录，提供恢复旧版和固定 v0.4.5 的路径。
+- 提供独立技能 ZIP、SHA256 校验文件、安装包 VERSION 和 GitHub Issues 反馈入口。
+
+### Validation And Known Limits
+
+验证范围与本次结果见 [VALIDATION.md](VALIDATION.md)。交接行为采用已验证 H 快照的四份文件；历史 24 项核心行为判定（其中含 8 次留出试跑）及两条四步链通过。本次安装和首跑检查另列，不能把历史结果表述为所有客户端均已验证。
+
+H 的 7 项篇幅比例性下降和后续简洁性评审未决继续保留；本版不声称输出质量收尾完成，也不声称 Q25 完整矩阵通过。输出可能偏长，用户仍需检查事实、缺失证据和待决事项。
+
+本版保持 documentation-first：不新增 helper、API integration、credential setup、tenant connectors、unattended or automated writeback 或 benchmark ranking。客户端中的合成首跑不证明供应商能力、生产集成或团队长期收益；暂无真人使用反馈。
+
 ## v0.4.5 - 2026-08-19
 
 `v0.4.5` 已完成公开 patch release execution。

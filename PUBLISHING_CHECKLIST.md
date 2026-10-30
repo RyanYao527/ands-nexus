@@ -1,6 +1,21 @@
 # Publishing Checklist
 
-本清单用于 `ands-nexus` skill 的内部试用、release candidate 准备和公开发布执行检查。当前公开版本是 `v0.4.5`；GitHub release: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.5>。
+本清单用于 `ands-nexus` skill 的内部试用、release candidate 准备和公开发布执行检查。本次版本是 `v0.4.6`；发布状态以 [GitHub Release](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6) 为准。较早章节保留历史事实。
+
+## v0.4.6 Student Patch
+
+- [x] Owner 已授权独立分支、有限发布检查、PR / CI / 合并及正式 Release。
+- [x] H 冻结清单 69 文件校验一致，只纳入相对主线的四份交接文件；Q25 工作区和历史结果保留。
+- [x] 发布范围固定为交接修复、学员入口、安装升级回退、反馈和版本附件；helper 与完整质量研究后移。
+- [ ] 安装包、首次安装、升级、回退和本地引用检查完成。
+- [ ] Windows PowerShell 5.1 / PowerShell Core 包检查完成。
+- [ ] Codex 四步合成链与四项聚焦行为检查完成；Claude Code 实测状态如实披露。
+- [ ] 独立发布复核无阻断项，git diff --check 通过。
+- [ ] PR 与合并后的主线 CI 通过。
+- [ ] v0.4.6 标签、非草稿且非预发布 Release、标签来源 ZIP 和 SHA256SUMS.txt 发布完成。
+- [ ] 重新下载附件并验证 SHA256、版本、安装路径；项目 Hub 与 Lessons 已同步。
+
+本版的有限发布检查结果见 [VALIDATION.md](VALIDATION.md)。历史 H 的行为证据、简洁性缺口与本次实际检查分别记录；未完成项不记为通过。
 
 ## v0.4.5 Public Patch Release Execution
 

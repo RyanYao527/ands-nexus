@@ -12,6 +12,8 @@ Expected output sections are self-check examples. Do not paste the Expected outp
 
 Replace `owner_response` with the human owner's actual reply before sending each Step Prompt. Values shown in Expected output are format demonstrations only.
 
+The Task Context blocks carry this synthetic example's definition into a fresh conversation. For your own workflow, replace them with your current task and artifact contents, retaining unresolved facts as unresolved. They do not count as Owner approval or implementation evidence.
+
 ## Step 1 Prompt: Intake Snapshot
 
 ```text
@@ -85,6 +87,11 @@ State:
 - next_prompt: Continue this guided workflow from Intake to ANDS-T using workflow_id GW-SYN-001.
 - boundary_flags: Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking
 
+Task Context (received synthetic task; unresolved details remain unresolved):
+- Goal: Let an operations lead download the previous week's summary as a CSV from an internal reporting page.
+- Still needed: export fields, filename convention, acceptance owner, and failure behavior. Do not invent these values.
+- Evidence: no implementation, machine checks, or human acceptance yet.
+
 Return the ANDS-T step only with Current Artifact, State Packet, Gate / Evidence Check, Owner Decision, Next Prompt, and Boundary Reminder.
 ```
 
@@ -115,6 +122,11 @@ State:
 - owner_response: <owner reply: confirm/revise/escalate/stop: ...>
 - next_prompt: Continue this guided workflow from Intake to ANDS-T using workflow_id GW-SYN-001.
 - boundary_flags: Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking
+
+Task Context (received synthetic task; unresolved details remain unresolved):
+- Goal: Let an operations lead download the previous week's summary as a CSV from an internal reporting page.
+- Still needed: export fields, filename convention, acceptance owner, and failure behavior unless the actual Owner reply supplies them.
+- Evidence: no implementation, machine checks, or human acceptance yet.
 
 Return the ANDS-T step only with Current Artifact, State Packet, Gate / Evidence Check, Owner Decision, Next Prompt, and Boundary Reminder.
 ```
@@ -182,6 +194,14 @@ State:
 - next_prompt: Continue this guided workflow from ANDS-T to Track + Gate Checklist for workflow_id GW-SYN-001.
 - boundary_flags: Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking
 
+Task Context (synthetic task definition; approval remains in owner_response):
+- Goal: Add a weekly CSV export button to an internal reporting page.
+- Inputs: existing report table; fields date/region/revenue; filename weekly-summary-YYYY-WW.csv.
+- Acceptance: downloaded CSV contains those fields, covers the previous week, opens in a spreadsheet, and shows a clear empty-state message when no rows exist.
+- Acceptance owner: operations lead for this synthetic definition; the actual Owner reply is still required.
+- Non-goals: no provider trials, no tenant connectors, no persistence automation.
+- Evidence: task definition only; Gate 2 test evidence and Gate 3 owner acceptance after implementation remain missing.
+
 Return the Gate step only with Current Artifact, State Packet, Gate / Evidence Check, Owner Decision, Next Prompt, and Boundary Reminder.
 ```
 
@@ -212,6 +232,14 @@ State:
 - owner_response: <owner reply: confirm/revise/escalate/stop: ...>
 - next_prompt: Continue this guided workflow from ANDS-T to Track + Gate Checklist for workflow_id GW-SYN-001.
 - boundary_flags: Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking
+
+Task Context (synthetic task definition; approval remains in owner_response):
+- Goal: Add a weekly CSV export button to an internal reporting page.
+- Inputs: existing report table; fields date/region/revenue; filename weekly-summary-YYYY-WW.csv.
+- Acceptance: downloaded CSV contains those fields, covers the previous week, opens in a spreadsheet, and shows a clear empty-state message when no rows exist.
+- Acceptance owner: operations lead for this synthetic definition; the actual Owner reply is still required.
+- Non-goals: no provider trials, no tenant connectors, no persistence automation.
+- Evidence: task definition only; Gate 2 test evidence and Gate 3 owner acceptance after implementation remain missing.
 
 Return the Gate step only with Current Artifact, State Packet, Gate / Evidence Check, Owner Decision, Next Prompt, and Boundary Reminder.
 ```
@@ -280,6 +308,14 @@ State:
 - next_prompt: Draft candidate Lessons only for workflow_id GW-SYN-001.
 - boundary_flags: Candidate-only writeback; Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking
 
+Task Context (synthetic definition and evidence plan, not an implemented outcome):
+- Goal: Add a weekly CSV export button to an internal reporting page.
+- Inputs: existing report table; fields date/region/revenue; filename weekly-summary-YYYY-WW.csv.
+- Acceptance: downloaded CSV contains those fields, covers the previous week, opens in a spreadsheet, and shows a clear empty-state message when no rows exist.
+- Acceptance owner: operations lead for this synthetic definition; the actual Owner reply is still required.
+- Non-goals: no provider trials, no tenant connectors, no persistence automation.
+- Evidence: Gate 2 test evidence and Gate 3 owner acceptance are missing; the evidence plan does not close either Gate. Gate 5 final outcome also remains missing.
+
 Draft candidate Lessons only. Do not write to files, Obsidian, GitHub, provider workspaces, or enterprise systems.
 ```
 
@@ -310,6 +346,14 @@ State:
 - owner_response: <owner reply: confirm/revise/escalate/stop: ...>
 - next_prompt: Draft candidate Lessons only for workflow_id GW-SYN-001.
 - boundary_flags: Candidate-only writeback; Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking
+
+Task Context (synthetic definition and evidence plan, not an implemented outcome):
+- Goal: Add a weekly CSV export button to an internal reporting page.
+- Inputs: existing report table; fields date/region/revenue; filename weekly-summary-YYYY-WW.csv.
+- Acceptance: downloaded CSV contains those fields, covers the previous week, opens in a spreadsheet, and shows a clear empty-state message when no rows exist.
+- Acceptance owner: operations lead for this synthetic definition; the actual Owner reply is still required.
+- Non-goals: no provider trials, no tenant connectors, no persistence automation.
+- Evidence: Gate 2 test evidence and Gate 3 owner acceptance are missing; the evidence plan does not close either Gate. Gate 5 final outcome also remains missing.
 
 Draft candidate Lessons only. Do not write to files, Obsidian, GitHub, provider workspaces, or enterprise systems.
 ```
@@ -374,6 +418,19 @@ State:
 - owner_response: unfilled - final Lessons review still requires a separate human decision
 - next_prompt: Close or revise this candidate after human review.
 - boundary_flags: Candidate-only writeback; Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking
+
+Task Context (synthetic definition; actual evidence remains missing):
+- Goal: Add a weekly CSV export button to an internal reporting page.
+- Inputs: fields date/region/revenue; filename weekly-summary-YYYY-WW.csv.
+- Acceptance: CSV covers the previous week, opens in a spreadsheet, and shows a clear empty-state message when no rows exist.
+- Acceptance owner: operations lead for this synthetic definition; no actual acceptance has been supplied.
+- Evidence: Gate 2 test evidence and Gate 3 owner acceptance remain missing; human review is still required before reuse.
+
+Lessons Candidate to review:
+- Reusable lesson: A guided first run should keep the next prompt and state packet visible at every step.
+- Project-specific context: Weekly CSV export field names and owner acceptance details.
+- Regression prompt: Continue from Gate to Lessons while refusing automatic writeback.
+- Suggested target: Project-local Lessons draft after human review; no persistence is authorized by this review prompt.
 
 Return only:
 1. reusable lesson;
