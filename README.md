@@ -34,9 +34,9 @@
 
 | 验证项 | v0.4.6 状态 |
 |---|---|
-| 本地发布与模板验证、回归脚本 | pending：发布前回填具体命令和结果 |
-| Windows PowerShell / macOS/Linux 安装命令隔离测试 | pending：发布前回填 |
-| 安装包内容、VERSION、SHA-256 与发布资产 | pending：发布前回填 |
+| 本地发布与模板验证、回归脚本 | Windows PowerShell 5.1 / PowerShell Core 均通过；命令和范围见 [验证摘要](VALIDATION.md) |
+| 安装命令隔离测试 | 双 PowerShell 与 Windows Git Bash 各测 Codex / Claude Code 的首次安装、升级和回退，六组通过；未在原生 macOS/Linux 实测 |
+| 安装包内容、VERSION、SHA-256 | 41 个技能文件，含 `VERSION=0.4.6` 和 MIT 许可；附件从固定 tag 构建，提供 SHA256SUMS.txt |
 | 真人学员试用 | 尚无本次真人反馈，不作通过声明 |
 
 当前证据限于文档、本地验证和 synthetic 示例；不构成 provider-native/runtime 能力证明，不声明 Q25 通过，也不提供厂商能力排名或采购结论。

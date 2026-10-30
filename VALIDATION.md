@@ -2,7 +2,7 @@
 
 ## 发布来源
 
-基线为 `d1bbbbc000f4054c49e484dbc471e317314b2089`。四份交接文档来自 H 冻结快照，清单 SHA256 为 `c7d2f99eab0b9492785619266c4acaae2247983f7d5f244101851d1a293fc7dc`，69 份源文件逐项核验一致。安装包及仓库中的首跑示例保持相同。
+基线为 `d1bbbbc000f4054c49e484dbc471e317314b2089`。先引入 H 冻结快照的四份交接文件，清单 SHA256 为 `c7d2f99eab0b9492785619266c4acaae2247983f7d5f244101851d1a293fc7dc`，69 份源文件逐项核验一致。随后根据本次实际首答失败补充回复来源、复盘事实依据、提案标识和返回状态规则；最终包并非原 H 的逐字副本。安装包及仓库中的首跑示例保持相同。
 
 H 历史核心行为：12 场景 × 2 次共 24 项通过，包含 8 次留出试跑；两条四步链另行通过。这些是历史合成测试，不是本次重新执行，也不是所有模型或客户端的兼容保证。
 
@@ -10,14 +10,18 @@ H 历史核心行为：12 场景 × 2 次共 24 项通过，包含 8 次留出�
 
 | 检查 | 状态 |
 |---|---|
-| Windows PowerShell 5.1 / PowerShell Core 包检查 | 待执行 |
-| ZIP 安装、升级、回退及引用一致性 | 待执行 |
+| Windows PowerShell 5.1 / PowerShell Core 包检查 | `test_validate_release.ps1` 与 `validate_release.ps1` 均通过；包含模板、writeback 回归、清单与扫描；外部 quick_validate 未提供，明确 SKIP |
+| ZIP 安装、升级、回退及引用一致性 | 双 PowerShell、Windows Git Bash 各测 Codex / Claude Code，共六组通过；备份在扫描目录外，无嵌套且恢复的 v0.4.5 文件哈希一致；未实测原生 macOS/Linux |
 | Codex 四步合成首跑与新会话交接 | 待执行 |
 | revise / unfilled / stop / CI 与 Gate 3 分离 | 待执行 |
-| Claude Code 原生安装说明 | 已按官方文档核对；行为实测待检查现成登录 |
+| Claude Code 安装说明与合成练习 | 安装说明按官方文档核对；使用现有 Claude Code 2.1.304 及其配置的默认 runtime（观测为 deepseek-flash），修后行为验证进行中；不代表 Anthropic 模型验证 |
 | 独立发布复核、PR 与主线 CI | 待执行 |
 
 安装路径依据：[Codex](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)、[Claude Code](https://code.claude.com/docs/en/skills)。其他工具仅提供手动加载方式，不宣称全部实测。
+
+本地检查曾因新增官方文档 URL 和中文否定表述而失败。扫描器现只剥离两个完整官方文档地址，仍检测同行其他地址和私有路径；新增正例及四种反例通过。否定表述改用既有 Non-Scope 格式，未放宽集成能力声明检查。
+
+本次保留首轮及修后首答中的失败：无当前回复时错误推进；Lessons 补写未经记录支持的轮次和发现时间；未标注的时间端点假设；新 Gate 产物的返回 State 仍停留在 ANDS-T。对应修正后只复测相关路径，原输出及结论不覆盖。最终结论以本页回填结果为准，不将多轮通过结果拼成同源矩阵。
 
 ## 保留的限制
 
