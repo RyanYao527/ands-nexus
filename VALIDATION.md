@@ -12,10 +12,10 @@ H 历史核心行为：12 场景 × 2 次共 24 项通过，包含 8 次留出�
 |---|---|
 | Windows PowerShell 5.1 / PowerShell Core 包检查 | `test_validate_release.ps1` 与 `validate_release.ps1` 均通过；包含模板、writeback 回归、清单与扫描；外部 quick_validate 未提供，明确 SKIP |
 | ZIP 安装、升级、回退及引用一致性 | 双 PowerShell、Windows Git Bash 各测 Codex / Claude Code，共六组通过；备份在扫描目录外，无嵌套且恢复的 v0.4.5 文件哈希一致；未实测原生 macOS/Linux |
-| Codex 四步合成首跑与新会话交接 | 待执行 |
-| revise / unfilled / stop / CI 与 Gate 3 分离 | 待执行 |
+| Codex 四步合成首跑与新会话交接 | Codex CLI 0.163.0 的四个独立新会话通过，实际读取冻结包；最后任务卡模板修正后的 ANDS-T 单次兼容复测通过，版本覆盖见下文 |
+| revise / unfilled / stop / CI 与 Gate 3 分离 | 首次修正后的四项聚焦首答通过；停止不继续、缺回复不自授权、CI 不替代 Gate 3。该组不是最终包同源重跑 |
 | Claude Code 安装说明与合成练习 | 安装说明及隔离安装通过；现有 Claude Code 2.1.304 + deepseek-flash 配置行为未通过：在新确认后仍停留 Gate，未生成所请求的 Lessons。不是 Anthropic 模型验证；其他 Claude 配置未实测 |
-| 独立发布复核、PR 与主线 CI | 待执行 |
+| 独立发布复核、PR 与主线 CI | 各定点源码复核通过；PR CI 通过。当前 Claude 配置失败仍保留，发布范围待 Owner 决定；尚未合并，主线 CI 和 tag 发布待执行 |
 
 安装路径依据：[Codex](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)、[Claude Code](https://code.claude.com/docs/en/skills)。其他工具仅提供手动加载方式，不宣称全部实测。
 
@@ -23,7 +23,15 @@ H 历史核心行为：12 场景 × 2 次共 24 项通过，包含 8 次留出�
 
 本次保留首轮及修后首答中的失败：无当前回复时错误推进；Lessons 补写未经记录支持的轮次和发现时间；未标注的时间端点假设；新 Gate 产物的返回 State 仍停留在 ANDS-T。对应修正后只复测相关路径，原输出及结论不覆盖。最终结论以本页回填结果为准，不将多轮通过结果拼成同源矩阵。
 
-精度修正后的 Claude 定点链：ANDS-T 与 Gate 通过，但 Gate 生成的 Next Prompt 含有陈旧的回复时间说明。下一会话将其置于新填写的 `confirm` 之上，未产生 Lessons，且改变了当前回复的来源表述。该失败保持失败；不能把安装通过或 CI 通过当作此配置的行为通过。当前正式发布仍等待 Codex 最终记录及 Owner 对首发支持范围的决定。
+精度修正后的 Claude 定点链：ANDS-T 与 Gate 通过，但 Gate 生成的 Next Prompt 含有陈旧的回复时间说明。下一会话将其置于新填写的 `confirm` 之上，未产生 Lessons，且改变了当前回复的来源表述。该失败保持失败；不能把安装通过或 CI 通过当作此配置的行为通过。当前正式发布仍等待 Owner 对首发支持范围的决定。
+
+### 本次行为覆盖的版本来源
+
+- `9ffd50a`：Codex 的 revise / unfilled / stop / CI 与 Gate 3 分离四项聚焦通过。Claude 本轮发现的问题及原答保留。
+- `43cff23`（ZIP `89e4589f…44b21b6`）：Codex Intake → ANDS-T → Gate → Lessons 四步首答通过；每步新建会话，下一输入为上一步完整 Next Prompt，仅替换 Owner 回复。读源、回复来源、六段、13 字段、Gate 缺口和无业务写入均有记录。
+- `da5c9be`（ZIP `2213da3c…62ad2c0c`）：仅修改任务卡 Input 的来源精度提示，其余 40 个包文件不变。Codex 重放同一 ANDS-T 输入的兼容检查通过；Claude 重放同一输入后端点修复通过，随后新 Gate 通过、新 Lessons 失败。
+
+这组记录是有限发布检查与受影响路径复测，不是最终包同源完整矩阵，也不是 Q25 验收。所有原输入、原答、实际命令、退出码、读取文件与哈希及失败判据保留在项目发布证据包。
 
 ## 保留的限制
 
