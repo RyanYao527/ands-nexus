@@ -14,7 +14,7 @@ H 历史核心行为：12 场景 × 2 次共 24 项通过，包含 8 次留出�
 | ZIP 安装、升级、回退及引用一致性 | 双 PowerShell、Windows Git Bash 各测 Codex / Claude Code，共六组通过；备份在扫描目录外，无嵌套且恢复的 v0.4.5 文件哈希一致；未实测原生 macOS/Linux |
 | Codex 四步合成首跑与新会话交接 | 待执行 |
 | revise / unfilled / stop / CI 与 Gate 3 分离 | 待执行 |
-| Claude Code 安装说明与合成练习 | 安装说明按官方文档核对；使用现有 Claude Code 2.1.304 及其配置的默认 runtime（观测为 deepseek-flash），修后行为验证进行中；不代表 Anthropic 模型验证 |
+| Claude Code 安装说明与合成练习 | 安装说明及隔离安装通过；现有 Claude Code 2.1.304 + deepseek-flash 配置行为未通过：在新确认后仍停留 Gate，未生成所请求的 Lessons。不是 Anthropic 模型验证；其他 Claude 配置未实测 |
 | 独立发布复核、PR 与主线 CI | 待执行 |
 
 安装路径依据：[Codex](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)、[Claude Code](https://code.claude.com/docs/en/skills)。其他工具仅提供手动加载方式，不宣称全部实测。
@@ -22,6 +22,8 @@ H 历史核心行为：12 场景 × 2 次共 24 项通过，包含 8 次留出�
 本地检查曾因新增官方文档 URL 和中文否定表述而失败。扫描器现只剥离两个完整官方文档地址，仍检测同行其他地址和私有路径；新增正例及四种反例通过。否定表述改用既有 Non-Scope 格式，未放宽集成能力声明检查。
 
 本次保留首轮及修后首答中的失败：无当前回复时错误推进；Lessons 补写未经记录支持的轮次和发现时间；未标注的时间端点假设；新 Gate 产物的返回 State 仍停留在 ANDS-T。对应修正后只复测相关路径，原输出及结论不覆盖。最终结论以本页回填结果为准，不将多轮通过结果拼成同源矩阵。
+
+精度修正后的 Claude 定点链：ANDS-T 与 Gate 通过，但 Gate 生成的 Next Prompt 含有陈旧的回复时间说明。下一会话将其置于新填写的 `confirm` 之上，未产生 Lessons，且改变了当前回复的来源表述。该失败保持失败；不能把安装通过或 CI 通过当作此配置的行为通过。当前正式发布仍等待 Codex 最终记录及 Owner 对首发支持范围的决定。
 
 ## 保留的限制
 
