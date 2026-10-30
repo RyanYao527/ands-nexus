@@ -4,6 +4,8 @@
 
 面向学员的正式补丁：补全新会话交接信息，并提供下载、安装、升级、首跑、反馈和回退的短路径。
 
+**首发支持为 Codex。** Owner 已明确选择此范围。Claude Code 安装说明保留；本次 Claude Code 2.1.304 + deepseek-flash 配置仍有新 confirm 被陈旧交接文字覆盖、Lessons 缺失的失败，原判保留。其他 Claude 配置未实测，不宣称通过。
+
 Release: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6>
 
 ### Changed

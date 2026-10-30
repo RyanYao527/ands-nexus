@@ -4,6 +4,8 @@
 
 **当前正式版：v0.4.6。** 从 [START-HERE](START-HERE.md) 开始，完成一次小型虚构任务练习。
 
+**本版以 Codex 为首发支持。** Claude Code 的安装说明保留，但本次测试的 Claude Code 2.1.304 + DeepSeek 配置未通过交接练习：旧提示文字可能覆盖新确认，导致 Lessons 未生成。其他 Claude 配置未实测。详见[验证摘要](VALIDATION.md)。
+
 ## 快速开始
 
 1. **下载指定版本**：[v0.4.6 Release](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6) · [安装包](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/ands-nexus-v0.4.6.zip) · [SHA256SUMS.txt](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/SHA256SUMS.txt)。不要用 `main` 代替发布版本。
@@ -13,11 +15,11 @@
 
 | 使用工具 | 用户级安装目录 | 显式调用 |
 |---|---|---|
-| Codex | `~/.agents/skills/ands-nexus/` | `$ands-nexus` |
-| Claude Code | `~/.claude/skills/ands-nexus/` | `/ands-nexus` |
+| Codex（本版首发支持） | `~/.agents/skills/ands-nexus/` | `$ands-nexus` |
+| Claude Code（保留安装说明，行为限制见上文） | `~/.claude/skills/ands-nexus/` | `/ands-nexus` |
 | 其他工具 | 手动加载 `SKILL.md` 和所需路由资料 | 使用自然语言请求 |
 
-目录与调用方式依据 [Codex 官方说明](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)和 [Claude Code 官方说明](https://code.claude.com/docs/en/skills)。If you are not using Codex，请选择上表中的 Claude Code 或手动加载方式。Windows PowerShell 和 macOS/Linux 的可复制安装命令均在 [START-HERE](START-HERE.md)。
+目录与调用方式依据 [Codex 官方说明](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)和 [Claude Code 官方说明](https://code.claude.com/docs/en/skills)。If you are not using Codex，可参考 Claude Code 安装或手动加载说明，但不能据此视为行为验证通过。Windows PowerShell 和 macOS/Linux 的可复制安装命令均在 [START-HERE](START-HERE.md)。
 
 ## 可以用它做什么
 

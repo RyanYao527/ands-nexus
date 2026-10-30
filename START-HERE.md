@@ -2,6 +2,8 @@
 
 下载 → 安装 → 启用 → 4 步练习 → 反馈。先用一个小型虚构任务，体验如何写清任务、检查证据和留下复盘草稿。
 
+**本版首跑使用 Codex。** Claude Code 安装说明继续保留，但本次 Claude Code 2.1.304 + DeepSeek 配置未通过：新确认可能被旧交接文字覆盖，所请求的 Lessons 未生成。其他 Claude 配置未实测；安装成功不代表四步行为通过。详见[验证摘要](VALIDATION.md)。
+
 ## 1. 下载指定版本
 
 打开 [v0.4.6 Release](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6)，下载 [ands-nexus-v0.4.6.zip](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/ands-nexus-v0.4.6.zip) 和 [SHA256SUMS.txt](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/SHA256SUMS.txt)。校验后解压，顶层应为 `ands-nexus/`，其中有 `SKILL.md` 和内容为 `0.4.6` 的 `VERSION`。安装时不要多套一层同名目录。
@@ -64,7 +66,7 @@ printf '%s\n' '校验成功；下一步运行安装代码块。'
 
 ## 2. 安装
 
-先退出正在使用的 Codex / Claude Code 会话。选择一个 runtime 安装；以下命令默认 Codex，要安装到 Claude Code，把 `runtime` 的值改成 `claude`。
+先退出正在使用的 Codex / Claude Code 会话。以下命令默认安装本版首发支持的 Codex。若仅参考保留的 Claude Code 安装路径，把 `runtime` 的值改成 `claude`；该配置的行为限制见页首。
 
 | runtime | 安装目录 | 调用 |
 |---|---|---|

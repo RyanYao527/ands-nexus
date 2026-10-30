@@ -1,5 +1,7 @@
 # v0.4.6 验证摘要
 
+Owner 已明确选择 **Codex 首发支持**，保留 Claude 安装说明并披露当前 DeepSeek 配置行为未通过。该范围选择不改变原失败判定，也不把其他 Claude 配置列为已测试。
+
 ## 发布来源
 
 基线为 `d1bbbbc000f4054c49e484dbc471e317314b2089`。先引入 H 冻结快照的四份交接文件，清单 SHA256 为 `c7d2f99eab0b9492785619266c4acaae2247983f7d5f244101851d1a293fc7dc`，69 份源文件逐项核验一致。随后根据本次实际首答失败补充回复来源、复盘事实依据、提案标识和返回状态规则；最终包并非原 H 的逐字副本。安装包及仓库中的首跑示例保持相同。
@@ -15,15 +17,15 @@ H 历史核心行为：12 场景 × 2 次共 24 项通过，包含 8 次留出�
 | Codex 四步合成首跑与新会话交接 | Codex CLI 0.163.0 的四个独立新会话通过，实际读取冻结包；最后任务卡模板修正后的 ANDS-T 单次兼容复测通过，版本覆盖见下文 |
 | revise / unfilled / stop / CI 与 Gate 3 分离 | 首次修正后的四项聚焦首答通过；停止不继续、缺回复不自授权、CI 不替代 Gate 3。该组不是最终包同源重跑 |
 | Claude Code 安装说明与合成练习 | 安装说明及隔离安装通过；现有 Claude Code 2.1.304 + deepseek-flash 配置行为未通过：在新确认后仍停留 Gate，未生成所请求的 Lessons。不是 Anthropic 模型验证；其他 Claude 配置未实测 |
-| 独立发布复核、PR 与主线 CI | 各定点源码复核通过；PR CI 通过。当前 Claude 配置失败仍保留，发布范围待 Owner 决定；尚未合并，主线 CI 和 tag 发布待执行 |
+| 独立发布复核与发布执行 | Codex 首发范围下独立复核通过；[PR #1](https://github.com/RyanYao527/ands-nexus/pull/1) 记录合并及对应 CI。主线 CI、tag 与附件校验的实际执行记录见 [Release 正文](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6) |
 
 安装路径依据：[Codex](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)、[Claude Code](https://code.claude.com/docs/en/skills)。其他工具仅提供手动加载方式，不宣称全部实测。
 
 本地检查曾因新增官方文档 URL 和中文否定表述而失败。扫描器现只剥离两个完整官方文档地址，仍检测同行其他地址和私有路径；新增正例及四种反例通过。否定表述改用既有 Non-Scope 格式，未放宽集成能力声明检查。
 
-本次保留首轮及修后首答中的失败：无当前回复时错误推进；Lessons 补写未经记录支持的轮次和发现时间；未标注的时间端点假设；新 Gate 产物的返回 State 仍停留在 ANDS-T。对应修正后只复测相关路径，原输出及结论不覆盖。最终结论以本页回填结果为准，不将多轮通过结果拼成同源矩阵。
+本次保留首轮及修后首答中的失败：无当前回复时错误推进；Lessons 补写未经记录支持的轮次和发现时间；未标注的时间端点假设；新 Gate 产物的返回 State 仍停留在 ANDS-T。对应修正后只复测相关路径，原输出及结论不覆盖。各版本结果如下，不将多轮通过结果拼成同源矩阵。
 
-精度修正后的 Claude 定点链：ANDS-T 与 Gate 通过，但 Gate 生成的 Next Prompt 含有陈旧的回复时间说明。下一会话将其置于新填写的 `confirm` 之上，未产生 Lessons，且改变了当前回复的来源表述。该失败保持失败；不能把安装通过或 CI 通过当作此配置的行为通过。当前正式发布仍等待 Owner 对首发支持范围的决定。
+精度修正后的 Claude 定点链：ANDS-T 与 Gate 通过，但 Gate 生成的 Next Prompt 含有陈旧的回复时间说明。下一会话将其置于新填写的 `confirm` 之上，未产生 Lessons，且改变了当前回复的来源表述。该失败保持失败；不能把安装通过或 CI 通过当作此配置的行为通过。Owner 已将该配置排除在本次首发支持范围之外，保留安装说明和失败披露。
 
 ### 本次行为覆盖的版本来源
 
