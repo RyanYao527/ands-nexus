@@ -20,7 +20,9 @@ Release: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6>
 
 H 的 7 项篇幅比例性下降和后续简洁性评审未决继续保留；本版不声称输出质量收尾完成，也不声称 Q25 完整矩阵通过。输出可能偏长，用户仍需检查事实、缺失证据和待决事项。
 
-本版保持 documentation-first：不新增 helper、API integration、credential setup、tenant connectors、unattended or automated writeback 或 benchmark ranking。客户端中的合成首跑不证明供应商能力、生产集成或团队长期收益；暂无真人使用反馈。
+本版保持 documentation-first，不新增 helper。客户端中的合成首跑不证明供应商能力、生产集成或团队长期收益；暂无真人使用反馈。
+
+Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking.
 
 ## v0.4.5 - 2026-08-19
 

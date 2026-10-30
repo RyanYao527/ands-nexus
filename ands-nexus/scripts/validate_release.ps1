@@ -222,6 +222,22 @@ function Remove-AllowedPublicScanMatches {
 
     $filtered = @()
     foreach ($match in $Matches) {
+        # Remove only the two verified installation references, then scan the
+        # remaining line. A public reference must not hide another private URL.
+        $remaining = $match
+        $installationReferences = @(
+            ('https' + '://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills'),
+            ('https' + '://code.claude.com/docs/en/skills')
+        )
+        foreach ($reference in $installationReferences) {
+            $remaining = [regex]::Replace($remaining, [regex]::Escape($reference) + '(?=[\s)\]>]|$)', '')
+        }
+        if ($remaining -ne $match) {
+            if ($remaining -match '([A-Za-z]:\\Users\\|/Users/|/home/|http[s]?://|\b\d{1,3}(\.\d{1,3}){3}\b|Projects[\\/]ands-nexus|04-Implementation[\\/]repo)') {
+                $filtered += $match
+            }
+            continue
+        }
         if ($match.Contains("github.com/RyanYao527/ands-nexus")) {
             continue
         }
