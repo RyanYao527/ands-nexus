@@ -72,6 +72,8 @@ Every guided step should carry these fields. Values may be short, but the field 
 
 State timing rule: the returned `State Packet` describes the step just produced. The `Next Prompt embedded state` may pre-set `active_role` for the next step so the next turn activates the right responsibility. Never invent `owner_response`; copy the current explicitly supplied reply, or keep it `unfilled` when no current reply is supplied.
 
+Any instruction to copy a handoff unchanged except for `owner_response` applies to the human preparing that next input. It does not freeze the receiving agent's returned state: update `current_step`, `active_role`, and `artifacts_created` to the artifact actually produced. Keep this distinction explicit when writing copy instructions.
+
 Owner response values in examples are format demonstrations only. Prompt blocks must use placeholders unless the human owner has already replied; never paste a prefilled sample as the human's decision.
 
 ### Current Reply And Provenance
@@ -87,6 +89,8 @@ Make instructions in each runnable Next Prompt conditional on its current `owner
 The next agent may have no access to the earlier conversation. Inside each copy-ready `Next Prompt`, include a short `Task Context` alongside the State Packet: the latest task definition, relevant input values, output constraints, Acceptance, human Owner role, and the evidence or artifact content needed for the next step. Artifact names alone do not carry their contents.
 
 Keep the existing 13 State Packet fields unchanged. Place Task Context outside the state block, within the same copy-ready prompt. Carry facts actually provided or produced in this workflow; label unresolved or proposed values as such. The context is not a new Owner approval and must not replace `owner_response` or remove outstanding evidence.
+
+Agent-added defaults or interpretations of ambiguous inputs must remain labelled as proposed assumptions in both the artifact and Task Context; do not report them as Owner-supplied, resolved, or confirmed Acceptance/Constraint values without confirmation. Drafting may continue with those assumptions pending.
 
 If a previous definition or candidate is missing, request its content and mark that gap. Do not reconstruct the user's task from an example's Expected output or from hidden conversation memory. When handing off a Lessons review, include the candidate's content, not only its name.
 
