@@ -1,6 +1,21 @@
 # Publishing Checklist
 
-本清单用于 `ands-nexus` skill 的内部试用、release candidate 准备和公开发布执行检查。当前公开版本是 `v0.4.5`；GitHub release: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.5>。
+本清单用于 `ands-nexus` skill 的内部试用、release candidate 准备和公开发布执行检查。本次版本是 `v0.4.6`；发布状态以 [GitHub Release](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6) 为准。较早章节保留历史事实。
+
+## v0.4.6 Student Patch
+
+- [x] Owner 已授权独立分支、有限发布检查、PR / CI / 合并及正式 Release。
+- [x] Owner 已明确选择 Codex 首发；保留 Claude 安装说明及当前 DeepSeek 配置未通过的事实。
+- [x] H 冻结清单 69 文件校验一致，先引入相对主线的四份交接文件，再针对本次首跑失败做定点修正；Q25 工作区和历史结果保留。
+- [x] 发布范围固定为交接修复、学员入口、安装升级回退、反馈和版本附件；helper 与完整质量研究后移。
+- [x] 安装包、首次安装、升级、回退和本地引用检查完成。
+- [x] Windows PowerShell 5.1 / PowerShell Core 包检查完成。
+- [x] Codex 四步合成链、最终模板定点复测与四项聚焦行为检查完成；分别保留版本来源，Claude Code 实测失败如实披露。
+- [x] Codex 首发范围下独立发布复核无新增阻断项，git diff --check 通过。
+
+发布执行顺序：对应提交的 PR CI 通过后合并，主线 CI 通过后建立 v0.4.6 标签；从标签构建 ZIP / SHA256SUMS.txt，创建非草稿、非预发布 Release；重新下载校验，并同步项目 Hub 与 Lessons。实际 PR、主线 CI、标签提交、附件哈希和回下载结果统一记录在 [Release 正文](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6)，不将打标签前的清单当作已发生的发布证明。
+
+本版的有限发布检查结果见 [VALIDATION.md](VALIDATION.md)。历史 H 的行为证据、简洁性缺口与本次实际检查分别记录；未完成项不记为通过。
 
 ## v0.4.5 Public Patch Release Execution
 

@@ -1,233 +1,73 @@
-# ANDS Nexus Skill
+# ANDS Nexus
 
-**ANDS Nexus**（`ands-nexus`）是一个公开的 Codex skill 包，用于把 AI-Native Development System (ANDS) 的团队协作方法整理成可复用的 references、templates、examples 和轻量验证脚本。
+把 AI 协作中的任务、责任人、检查和复盘写清楚。`ands-nexus` 是一套可安装的 skill、参考资料和模板，适合已经使用 AI agent、希望先跑通一个小型协作流程的团队。
 
-它面向正在用 AI agent / 大模型参与研发、文档、产品或运营协作的团队，帮助团队把“让 AI 做事”拆成更清楚的任务、角色、证据、验收和知识回写流程。它更接近一个 adoption / governance toolkit，而不是完整课程、生产级平台或厂商能力评测项目。
+**当前正式版：v0.4.6。** 从 [START-HERE](START-HERE.md) 开始，完成一次小型虚构任务练习。
 
-Quick fit check:
+**本版以 Codex 为首发支持。** Claude Code 的安装说明保留，但本次测试的 Claude Code 2.1.304 + DeepSeek 配置未通过交接练习：旧提示文字可能覆盖新确认，导致 Lessons 未生成。其他 Claude 配置未实测。详见[验证摘要](VALIDATION.md)。
 
-- Best for teams already using AI agents but missing shared task, Gate, owner, and Lessons discipline.
-- A 30-day pilot should produce ANDS-T cards, Track/Gate records, and reusable Lessons; it should not require platform work.
-- Not a production AI Gateway, provider benchmark, hosted workflow product, or connector pack.
-- First runs should use synthetic or desensitized tasks.
-- For public examples or validation, `data_class` says what kind of input/context was used; `PASS / NEEDS_REDACTION / BLOCKED` says whether the feedback or example can be published after review.
-- If you need live APIs, credentials, tenant systems, automatic persistence, or public provider comparisons, route to Enterprise review first.
-- Plain-language boundary: this package helps you rehearse tasks, roles, Gates, owner decisions, and Lessons. It does not connect your systems, run provider APIs, store credentials, change files automatically, or prove vendor capability.
+## 快速开始
 
-## What It Helps With
+1. **下载指定版本**：[v0.4.6 Release](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6) · [安装包](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/ands-nexus-v0.4.6.zip) · [SHA256SUMS.txt](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/SHA256SUMS.txt)。不要用 `main` 代替发布版本。
+2. **安装并启用**：按 [安装说明](START-HERE.md#2-安装) 把解压后的 `ands-nexus/` 放到对应目录。已有目录先移到 skills 扫描目录之外备份，再复制到新空目录。
+3. **完成 4 步练习**：[任务梳理 → ANDS-T 任务卡 → Track + Gate 检查 → Lessons 草稿](START-HERE.md#4-完成一次四步练习guided-workflow-first-run)。每步由你确认后再继续。
+4. **反馈问题**：到 [GitHub Issues](https://github.com/RyanYao527/ands-nexus/issues/new) 提交版本、runtime、步骤、预期、实际和脱敏复现。
 
-- 管理落地：设计 30/60/90 天试点计划、选择 Quick / Standard / Enterprise Track、定义治理边界和度量。
-- 任务表达：把普通需求改写成 ANDS-T，并补齐目标、输入、约束、验收和 Gate。
-- 引导式工作流：把 Intake、ANDS-T、Gate Checklist 和 Lessons Draft 拆成可连续执行的 visible-state steps。
-- Agent 协作：区分 AI PM / Orchestrator、Execution、Validation、Governance、Writeback 等角色。
-- 多 runtime 适配：在 prompt / profile / template 层面，为 Codex/OpenAI baseline、KIMI、GLM、MiniMax、Claude、DeepSeek、WorkBuddy 等 runtime 做离线适配准备。
-- 反馈沉淀：把脱敏后的试用反馈、延期原因、返工原因和有效做法转成 Lessons 或 regression prompt。
+| 使用工具 | 用户级安装目录 | 显式调用 |
+|---|---|---|
+| Codex（本版首发支持） | `~/.agents/skills/ands-nexus/` | `$ands-nexus` |
+| Claude Code（保留安装说明，行为限制见上文） | `~/.claude/skills/ands-nexus/` | `/ands-nexus` |
+| 其他工具 | 手动加载 `SKILL.md` 和所需路由资料 | 使用自然语言请求 |
 
-## Current Release
+目录与调用方式依据 [Codex 官方说明](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)和 [Claude Code 官方说明](https://code.claude.com/docs/en/skills)。If you are not using Codex，可参考 Claude Code 安装或手动加载说明，但不能据此视为行为验证通过。Windows PowerShell 和 macOS/Linux 的可复制安装命令均在 [START-HERE](START-HERE.md)。
 
-当前公开版本是 `v0.4.5`，已于 2026-08-19 发布。
+## 可以用它做什么
 
-Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.5>
+- 把模糊需求写成有目标、约束、验收标准和责任人的 ANDS-T。
+- 按风险选择 Quick / Standard / Enterprise Track，并区分机器检查与人的验收。
+- 明确 AI PM、执行、验证、治理和知识回写的分工。
+- 用 30 天小型试点、复盘和可复用 Lessons 改善团队协作。
 
-`v0.4.5` is a bounded release-engineering patch. It keeps the v0.4 documentation-first scope while adding Windows PowerShell 5.1 validation compatibility, manifest-driven asset validation, a minimal GitHub Actions release validation gate, a one-page glossary card, and a synthetic source provenance bundle example.
+需要更完整的例子时，查看 [示例索引](examples/INDEX.md)、[引导式首跑](examples/guided-workflow-first-run-v0.4.md)或[简短首跑](examples/first-run-prompt-packet-v0.3.1.md)。根目录 `examples/` 便于浏览；skill 内 `ands-nexus/examples/` 提供 `SKILL.md` 路由所需的安装副本。
 
-### Start Here
+## v0.4.6 的证据与限制
 
-New users should begin with `START-HERE.md`, then run `examples/guided-workflow-first-run-v0.4.md`.
+本版整理学员入口、安装与反馈说明，承接 H 轮历史交接基线。**H 轮历史记录是核心项 24/24、两条多轮链通过；同时旧 7 题出现比例性下降，简洁性仍未收尾。** 历史结果不能替代本次验证，也不能表示所有问题已解决。
 
-For the older compact first run, use `examples/first-run-prompt-packet-v0.3.1.md`.
+| 验证项 | v0.4.6 状态 |
+|---|---|
+| 本地发布与模板验证、回归脚本 | Windows PowerShell 5.1 / PowerShell Core 均通过；命令和范围见 [验证摘要](VALIDATION.md) |
+| 安装命令隔离测试 | 双 PowerShell 与 Windows Git Bash 各测 Codex / Claude Code 的首次安装、升级和回退，六组通过；未在原生 macOS/Linux 实测 |
+| 安装包内容、VERSION、SHA-256 | 41 个技能文件，含 `VERSION=0.4.6` 和 MIT 许可；附件从固定 tag 构建，提供 SHA256SUMS.txt |
+| 真人学员试用 | 尚无本次真人反馈，不作通过声明 |
 
-`START-HERE.md` now includes a one-page boundary card for `data_class`, `PASS / NEEDS_REDACTION / BLOCKED`, external-visible delivery, public claims, explicit paths, Vault scans, no provider-native validation, and no tenant connectors.
+当前证据限于文档、本地验证和 synthetic 示例；不构成 provider-native/runtime 能力证明，不声明 Q25 通过，也不提供厂商能力排名或采购结论。
 
-### Included In v0.4.5
-
-- `ands-nexus/references/guided-workflow-mvp.md` for the four-step guided workflow and role/state model.
-- `ands-nexus/references/glossary.md` for first-run terminology.
-- `ands-nexus/assets/templates/guided-workflow-state-packet.md` for copyable workflow state.
-- `examples/guided-workflow-first-run-v0.4.md` for a synthetic Intake -> ANDS-T -> Gate -> Lessons run.
-- `examples/guided-workflow-regression-v0.4.md` for checking role drift, skipped Gate evidence, missing owner decision, writeback overreach, and Enterprise escalation.
-- Governance wording for explicit-path local writeback drafts, external-visible Track gray zones, public claims, provider comparisons, procurement advice, runtime workflow roles versus ANDS-A L1/L2/L3, and PASS / NEEDS_REDACTION / BLOCKED desensitization criteria.
-- `validate_release.ps1`, `validate_templates.ps1`, and `test_validate_release.ps1` checks for the v0.4 guided workflow assets.
-- `START-HERE.md` for a shorter first-run path.
-- `examples/INDEX.md` for choosing the right example.
-- `examples/post-release-feedback-intake-v0.3.1.md` for public feedback triage.
-- `examples/first-run-prompt-packet-v0.3.1.md` for one 10-minute ANDS-T + Gate + Lessons run.
-- `examples/role-routing-regression-scenarios-v0.3.1.md` for checking AI PM, Execution, Validation, Governance, and Writeback separation.
-- Offline/proxy provider adaptation references and handoff patterns.
-- Prompt/profile/template-level guidance for multi-runtime ANDS usage.
-- Provider label and role-routing matrix patterns.
-- Synthetic/proxy forward-test methodology.
-- Governance boundaries for future provider-native/API/tenant/connector/writeback work.
-- Release validation guards for provider-native/API/tenant/writeback/benchmark claim overreach.
-- `release-manifest.json` as the source of truth for release asset groups, expected counts, and required files.
-- `.github/workflows/release-validation.yml` as a validation-only GitHub Actions gate for push and pull request checks.
-- Windows PowerShell 5.1 and PowerShell Core validation compatibility for release scripts.
-- `ands-nexus/references/one-page-glossary-card.md` for a shorter first-run terminology card with Chinese aliases.
-- `examples/source-provenance-bundle-v0.4.md` for public-safe desensitized source provenance notes.
-
-### v0.4.5 Release Validation Status
-
-- `pwsh -NoProfile -File ./ands-nexus/scripts/test_validate_release.ps1`: PASS.
-- `powershell.exe -NoProfile -File ./ands-nexus/scripts/test_validate_release.ps1`: PASS.
-- `pwsh -NoProfile -File ./ands-nexus/scripts/validate_release.ps1`: PASS; when `-QuickValidatePath` is not supplied it prints `SKIP quick_validate (no -QuickValidatePath; external Codex skill-creator tool not in repo)`.
-- `powershell.exe -NoProfile -File ./ands-nexus/scripts/validate_release.ps1`: PASS.
-- `pwsh -NoProfile -File ./ands-nexus/scripts/validate_templates.ps1`: PASS.
-- `quick_validate.py is external` and is not included in this repository.
-- `git diff --check`: PASS.
-- Manifest-driven release validation: PASS.
-- Public package scan: PASS.
-- GitHub release: non-draft, non-prerelease.
-
-### Evidence Level And Boundaries
-
-v0.4.5 的证据等级仍是 documentation / local validation / synthetic example。它可以作为 guided ANDS first-run 和后续 workflow automation discovery 的准备材料，但不能被解读为真实 runtime 能力证明。
+首次练习使用虚构任务。`data_class` 描述输入材料类别；`PASS / NEEDS_REDACTION / BLOCKED` 描述材料能否公开，两者不是同一个判断。真实客户数据、凭据、租户系统、公开能力声明、合同承诺或采购建议应转 Enterprise 审查。普通脱敏教学材料可采用 Standard 并加强 Gate 4。
 
 Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking.
 
-Writeback boundary: user-invoked draft generation to an explicit path is allowed only when explicitly requested. It does not authorize unattended persistence, Vault scans, GitHub sync, provider workspace writes, or enterprise-system updates.
+Writeback boundary: user-invoked draft generation to an explicit path is allowed only when explicitly requested. 只生成草稿或写入你明确指定的本地路径，不扫描或批量修改 Vault，不做 GitHub sync、provider workspace 写入或企业系统更新。本包不提供完整课程、生产级 AI Gateway、托管工作流或一键部署平台。
 
-Plain-language version: use v0.4.x as a workflow practice kit. It can help prepare what a human should review next; it should not be treated as a live integration, automatic knowledge-base updater, or public vendor comparison. A desensitized public example or template can be Standard with stronger Gate 4 review only when it makes no public capability claim, customer commitment, contract/compliance statement, provider comparison, or procurement advice.
+## 维护者验证
 
-## Previous Releases
+学员无需先运行验证脚本。以下命令在**固定 tag 的完整源码仓库根目录**运行；安装 ZIP 只含 skill，不等同于完整源码仓库。
 
-- `v0.4.4`：governance-boundary wording patch，修复三值脱敏说明、A4 外部可见/公开声明/provider 对比/采购建议边界、B2 人话术语、B1 `-OutputPath`/Vault 小澄清。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.4>。
-- `v0.4.3`：governance consistency + guided workflow polish patch，修复 B1/A4/A6/B2/BL-03/BL-05 一致性问题。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.3>。
-- `v0.4.2`：owner_response boundary micro patch，防止 copyable first-run prompts 预填 sample human owner decisions。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.2>。
-- `v0.4.1`：guided workflow stabilization patch，修复 installable examples、non-Codex/macOS/Linux onboarding、glossary、owner_response、writeback boundary、template mapping、validation transparency 和 Track/Gate owner wording。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.1>。
-- `v0.4.0`：documentation-first guided workflow MVP，新增 guided workflow reference、state packet template、first-run example 和 regression prompts。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.0>。
-- `v0.3.1`：post-release adoption hardening patch，新增 START-HERE、examples index、feedback intake、10 分钟首跑 prompt packet 和 role-routing regression scenarios。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.3.1>。
-- `v0.3.0`：公开 offline/provider-adaptation documentation package，覆盖 provider adaptation references、role-routing matrix patterns、prompt/profile/template-level guidance 和 synthetic/proxy forward-test methodology。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.3.0>。
-- `v0.2.2`：公开 prompt/profile/template-level multi-agent/model adapter pack，覆盖 capability matrix、adapter card、provider profile cards 和 forward-test suite。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.2.2>。
-- `v0.2.1`：新增 30-day pilot template、post-release feedback intake、release validation aggregator 和 `.gitattributes`。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.2.1>。
-- `v0.2.0`：补强 Windows UTF-8 说明、seed-user feedback intake、forward-test scenarios、Track/Gate 反模式和 Obsidian writeback MVP。Release URL: <https://github.com/RyanYao527/ands-nexus/releases/tag/v0.2.0>。
-- `v0.1.0`：初始公开版本，包含 skill skeleton、core references、templates、examples 和 template validation script。
-
-## Installation
-
-将本仓库根目录下的 `ands-nexus/` skill 文件夹复制或安装到 Codex 使用的 skills 目录中。安装后，目标 skills 目录下应直接出现 `ands-nexus/SKILL.md`。
-
-The installable skill folder now includes `ands-nexus/examples/` copies of the examples routed from `SKILL.md`. The repository root `examples/` folder remains the public browsing index.
-
-安装后，在 Codex 中使用 `$ands-nexus`，或用 ANDS、AI-Native Development System、ANDS-T、Gate、Track、Agent 矩阵、Lessons 等关键词触发。
-
-Windows PowerShell 示例：
+依赖 PowerShell 和 `rg`。macOS/Linux 可用 PowerShell Core；macOS 安装命令为 `brew install powershell ripgrep`，Linux 使用发行版对应的软件包。Windows 可用 PowerShell Core 或 Windows PowerShell 5.1。
 
 ```powershell
-$target = Join-Path $env:USERPROFILE ".codex\skills\ands-nexus"
-New-Item -ItemType Directory -Force (Split-Path $target) | Out-Null
-Copy-Item -Recurse -Force .\ands-nexus $target
-Test-Path (Join-Path $target "SKILL.md")
-```
-
-If you are not using Codex, load `ands-nexus/SKILL.md` as the main instruction in your AI tool, then attach or paste only the reference, template, and example files named in the Task Routing row that matches your request. `$ands-nexus` is a Codex trigger, not a required syntax for other runtimes.
-
-macOS/Linux users can run the validation helpers with PowerShell Core:
-
-```bash
-brew install powershell ripgrep
 pwsh -NoProfile -File ./ands-nexus/scripts/validate_templates.ps1
 pwsh -NoProfile -File ./ands-nexus/scripts/test_writeback_mvp.ps1
 pwsh -NoProfile -File ./ands-nexus/scripts/test_validate_release.ps1
 pwsh -NoProfile -File ./ands-nexus/scripts/validate_release.ps1
 ```
 
-On Linux, install equivalent packages for PowerShell Core and ripgrep with your package manager, then use the same `pwsh -File` commands. `validate_release.ps1` requires `rg` for public package scans and will print an install hint if it is missing.
+Windows PowerShell 5.1 可将 `pwsh` 换成 `powershell.exe`。`quick_validate.py is external`：它不在本仓库；未传入 `-QuickValidatePath` 时，发布验证会明确输出 `SKIP quick_validate (no -QuickValidatePath; external Codex skill-creator tool not in repo)`，不应记作已执行。GitHub Actions 只做发布验证，不自动发布。
 
-仓库根目录验证建议使用 PowerShell Core；Windows users can also run the same validator with Windows PowerShell 5.1 after the post-v0.4.4 hardening:
+Windows 读取中文异常时，使用 `Get-Content -Raw -Encoding UTF8 ./ands-nexus/SKILL.md`。
 
-```bash
-pwsh -NoProfile -File ./ands-nexus/scripts/validate_templates.ps1
-pwsh -NoProfile -File ./ands-nexus/scripts/test_writeback_mvp.ps1
-pwsh -NoProfile -File ./ands-nexus/scripts/test_validate_release.ps1
-pwsh -NoProfile -File ./ands-nexus/scripts/validate_release.ps1
-```
+## 版本与许可
 
-```powershell
-powershell.exe -NoProfile -File .\ands-nexus\scripts\test_validate_release.ps1
-powershell.exe -NoProfile -File .\ands-nexus\scripts\validate_release.ps1
-```
-
-### Windows UTF-8 Note
-
-如果在 Windows PowerShell 里读取中文 Markdown 出现 mojibake，先用 UTF-8 重新读取文件：
-
-```powershell
-Get-Content -Raw -Encoding UTF8 .\ands-nexus\SKILL.md
-Get-Content -Raw -Encoding UTF8 .\ands-nexus\references\governance-and-metrics.md
-```
-
-这通常是读取方式问题，不代表 skill 内容损坏。
-
-如需排查当前终端是否仍在错误解码，可先设置 UTF-8 输出，再检查是否能读到中文关键词、且没有常见 mojibake：
-
-```powershell
-chcp 65001 > $null
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
-$text = Get-Content -LiteralPath .\ands-nexus\SKILL.md -Raw -Encoding UTF8
-[pscustomobject]@{
-  ContainsExpectedChinese = $text.Contains('方法论')
-  ContainsCommonMojibake = $text.Contains('æ') -or $text.Contains('乱码')
-}
-```
-
-## Use Cases
-
-- 管理落地：为研发团队设计 30/60/90 天试点计划。
-- ANDS-T 改写：把普通需求改写成 AI 可执行、可治理、可验收的任务卡。
-- Agent 矩阵：区分 AI PM、执行 Agent 和工具/模型实例。
-- 多模型适配：为 KIMI、GLM、MiniMax、Claude、DeepSeek、WorkBuddy 或其他 runtime 设计 ANDS-compatible prompt packet、capability matrix 和 forward-test。
-- Gate / Track：按 Quick、Standard、Enterprise 调整治理强度。
-- Lessons 回写：把延期、返工、失败或有效做法沉淀为可复用知识。
-- 内部培训：准备 ANDS 简报、工作坊脚本或演示 trace。
-- 种子反馈归类：把脱敏后的真实试用反馈转成修订任务和 regression prompt。
-- Obsidian 回写草稿：生成项目内 frontmatter、双链和回写边界说明。
-- 发布后反馈入口：把脱敏后的公开反馈转成 Track、修订任务和 regression prompt。
-- 引导式首跑：用 visible State Packet 和 Next Prompt 串联 Intake、ANDS-T、Gate Checklist、Lessons Draft。
-
-## Example Prompts
-
-完整试用材料见 `examples/seed-user-prompts.md`。核心验收 prompt：
-
-1. 我们是一个 20 人研发团队，已经在用 Cursor 和 Codex，但现在比较混乱，没有统一任务标准，也没有知识沉淀。请用 ANDS 给我一个 30 天试点方案。
-2. 帮我把“给内部系统加一个导出周报功能”写成 ANDS-T。
-3. 是不是所有任务都要过五道 Gate？这样会不会太重？
-4. 我们想让 AI PM 调度多个 Agent 做需求拆解、开发、测试和发布，请帮我设计最小 Agent 矩阵。
-5. 这次上线延期是因为验收标准写得太模糊，Agent 做完以后业务方说不是他们要的。请按 ANDS 写一次复盘。
-
-v0.2 forward-test 场景见 `examples/forward-test-scenarios-v0.2.md`；种子用户反馈 intake 见 `examples/seed-user-feedback-intake-v0.2.md`；发布后反馈 intake 见 `examples/post-release-feedback-intake-v0.2.1.md`；多 runtime 适配 forward-test 见 `examples/agent-model-adaptation-forward-test-v0.2.2.md`；v0.3 offline provider profile material 见 `examples/provider-profile-cards-v0.3-internal.md` 和 `examples/provider-profile-offline-adoption-packet-v0.3.md`；v0.4 guided workflow material 见 `examples/guided-workflow-first-run-v0.4.md` 和 `examples/guided-workflow-regression-v0.4.md`。
-
-## Package Map
-
-```text
-ands-nexus/
-  README.md
-  LICENSE
-  RELEASE_NOTES.md
-  PUBLISHING_CHECKLIST.md
-  examples/
-  ands-nexus/
-    SKILL.md
-    agents/openai.yaml
-    examples/       # installable copies of SKILL-routed examples
-    references/
-    assets/templates/
-    scripts/        # optional validation and writeback MVP helpers
-```
-
-## Known Limits
-
-- 不提供完整 37 节课程内容。
-- 不构建生产级 AI Gateway。
-- 不提供一键部署 Dashboard 或 Obsidian 自动化；GitHub Actions 仅用于 release validation gate，不做自动发布。
-- Non-Scope: v0.4.5 has no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking。
-- 不承诺所有团队都适合一次性全量引入五道 Gate。
-- Obsidian writeback MVP 只生成草稿或写入显式指定路径；不扫描或批量改写 Vault。No unattended or automated writeback；user-invoked draft generation to an explicit path is allowed only when explicitly requested。若显式 `-OutputPath` 的父目录不存在，脚本可能创建该父目录；该行为只限于用户明确指定的本地草稿路径，不授权扫描 Vault、GitHub sync、provider workspace 写入或企业知识库自动更新。
-- 本包已经完成 v0.1.0 发布前脱敏审查。
-- `v0.2.1` 已完成公开发布前最终脱敏审查；后续真实反馈仍应先脱敏再进入 examples 或 validation。
-- `v0.3.x` 证据来自 design / official-doc-reviewed / proxy or synthetic forward-test 层级，不代表 runtime capability evidence 或 provider selection advice。
-- `v0.4.5` guided workflow material is documentation-first and does not provide workflow automation, hosted UI, or provider-native execution evidence.
-
-## License
-
-当前 `LICENSE` 使用 MIT 文本，Project Owner 已于 2026-08-12 确认正式采用 MIT License，并已确认可公开发布 v0.1 / v0.2 / v0.3 / v0.4。
+- [v0.4.5](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.5)：上一正式版，可作为固定回退版本。
+- [完整发布记录](RELEASE_NOTES.md) · [发布检查表](PUBLISHING_CHECKLIST.md) · [反馈模板](examples/post-release-feedback-intake-v0.3.1.md)。
+- [MIT License](LICENSE)。

@@ -680,6 +680,34 @@ Assert-PublicScanFails -NamePrefix "ands-release-enterprise-trigger-bypass-fixtu
     Set-Content -LiteralPath $enterpriseTriggerBypassFixture -Encoding UTF8 -Value "Enterprise triggers: $apiIntegration is available with no extra work."
 }
 
+$officialCodexUrl = 'https' + '://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills'
+$officialClaudeUrl = 'https' + '://code.claude.com/docs/en/skills'
+$officialReferenceRoot = New-ReleaseValidationRepoFixture -NamePrefix 'ands-release-official-references'
+try {
+    Set-Content -LiteralPath (Join-Path $officialReferenceRoot 'examples/installation-references.txt') -Encoding UTF8 -Value "[Codex]($officialCodexUrl) [Claude]($officialClaudeUrl)"
+    $officialOutput = & $validator -SkipWritebackTest -RepoRoot $officialReferenceRoot *>&1 | Out-String
+    Assert-Contains -Text $officialOutput -Expected 'PASS public_package_scan'
+}
+finally {
+    $resolvedFixture = [IO.Path]::GetFullPath($officialReferenceRoot)
+    $tempPrefix = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    if (-not $resolvedFixture.StartsWith($tempPrefix, [StringComparison]::OrdinalIgnoreCase)) { throw 'Unexpected fixture cleanup path' }
+    Remove-Item -LiteralPath $resolvedFixture -Recurse -Force
+}
+
+$unsafeReferenceLines = @(
+    ("[Claude]($officialClaudeUrl) " + ('https' + '://internal.example.invalid/private')),
+    ("[Codex]($officialCodexUrl) " + ('C:' + '\Users\example\secret')),
+    ($officialClaudeUrl + '/extra'),
+    ('https' + '://code.claude.com.evil.invalid/docs/en/skills')
+)
+foreach ($unsafeLine in $unsafeReferenceLines) {
+    Assert-PublicScanFails -NamePrefix 'ands-release-mixed-installation-reference' -ExpectedMessage 'Potential local path, URL, or IP matches found' -Arrange {
+        param([string]$scanFixtureRoot)
+        Set-Content -LiteralPath (Join-Path $scanFixtureRoot 'examples/unsafe-reference.txt') -Encoding UTF8 -Value $unsafeLine
+    }
+}
+
 $fullOutput = & $validator *>&1 | Out-String
 Assert-Contains -Text $fullOutput -Expected "PASS test_writeback_mvp"
 Assert-Contains -Text $fullOutput -Expected "PASS validate_release"

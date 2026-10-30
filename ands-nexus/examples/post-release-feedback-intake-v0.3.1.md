@@ -1,73 +1,58 @@
-# Post-Release Feedback Intake v0.3.1
+# 发布后反馈模板
 
-> Use this template to collect public feedback after `v0.3.0` or later releases. Do not paste secrets, private repository paths, real customer records, internal domains, or unredacted transcripts.
+适用于 v0.4.6 及历史版本；保留原文件名以兼容已有链接。提交到 [GitHub Issues](https://github.com/RyanYao527/ands-nexus/issues/new)。不要粘贴密钥、私人仓库路径、真实客户记录、内部域名或未脱敏的会话。
 
-## Feedback Metadata
+## 学员最小反馈
 
-| Field | Value |
+```text
+版本：v0.4.6 / v0.4.5 / v0.4.4 / v0.4.3 / v0.4.2 / v0.4.1 / v0.4.0 / v0.3.1 / v0.3.0 / 更早版本 / main / unknown
+Runtime：Codex / Claude Code / KIMI / GLM / MiniMax / DeepSeek / WorkBuddy / 其他（附工具版本）
+操作步骤：从下载、安装、启用或四步练习中的哪一步开始？
+预期结果：
+实际结果：
+脱敏复现：最小虚构输入 + 必要的脱敏输出
+```
+
+不知道的字段写 `unknown`，不要为了填表补造信息。以下为维护者分诊字段，学员可以不填。
+
+## 反馈记录
+
+| 字段 | 内容 |
 |---|---|
-| Feedback ID | `FB-v0.3.1-001` |
-| Date | `[YYYY-MM-DD]` |
-| Reporter role | `[manager / PM / engineer / governance reviewer / operator / other]` |
-| Installed release | `[v0.3.0 / v0.3.1 / main / unknown]` |
-| Runtime used | `[Codex / KIMI / GLM / MiniMax / Claude / DeepSeek / WorkBuddy / other / unknown]` |
+| Feedback ID | `FB-v0.4.6-001`（按实际版本编号） |
+| 日期 | `[YYYY-MM-DD]` |
+| 反馈者角色 | `[管理者 / PM / 工程师 / 治理审核 / 运营 / 其他]` |
 | Data class | `[synthetic / desensitized / unknown]` |
-| Task type | `[adoption / ANDS-T / Gate / role-routing / validation / writeback / provider adaptation]` |
-| Track observed | `[Quick / Standard / Enterprise / unclear]` |
+| 任务类型 | `[安装 / 启用 / 试点 / ANDS-T / Gate / 角色路由 / 验证 / 回写 / runtime 适配]` |
+| Track | `[Quick / Standard / Enterprise / unclear]` |
+| 迷惑表述或缺失资料 | `[脱敏短引文、文件名或 none]` |
+| 严重程度 | `[Low / Medium / High]` |
 
-## Reported Issue
+## 边界检查
 
-| Field | Value |
+| 问题 | 回答 |
 |---|---|
-| User goal | `[short description]` |
-| Expected behavior | `[what the user expected]` |
-| Actual behavior | `[what happened]` |
-| Confusing wording | `[quote a short desensitized phrase, or write none]` |
-| Missing asset | `[reference / template / example / script / none / unknown]` |
-| Severity | `[Low / Medium / High]` |
-
-## Boundary Check
-
-| Question | Answer |
-|---|---|
-| Did the feedback request real data? | `[yes / no / unclear]` |
-| Did it request secrets or credentials? | `[yes / no / unclear]` |
-| Did it request live provider work? | `[yes / no / unclear]` |
-| Did it request tenant or connector work? | `[yes / no / unclear]` |
-| Did it request automated persistence? | `[yes / no / unclear]` |
-| Did it request public provider comparison or ranking? | `[yes / no / unclear]` |
+| 是否请求真实数据？ | `[yes / no / unclear]` |
+| 是否请求密钥或凭据？ | `[yes / no / unclear]` |
+| 是否请求 live provider 工作？ | `[yes / no / unclear]` |
+| 是否请求租户或连接器工作？ | `[yes / no / unclear]` |
+| 是否请求自动持久化？ | `[yes / no / unclear]` |
+| 是否请求公开 provider 对比或排名？ | `[yes / no / unclear]` |
 
 If any answer is `yes` or `unclear`, route to Enterprise review before changing public guidance.
 
-## Classification
+## 分诊与后续
 
-| Category | Mark One |
+| 字段 | 内容 |
 |---|---|
-| Onboarding confusion | `[ ]` |
-| Missing first-run path | `[ ]` |
-| Wrong Track selection | `[ ]` |
-| Role-routing confusion | `[ ]` |
-| Gate evidence gap | `[ ]` |
-| Writeback boundary confusion | `[ ]` |
-| Provider-adaptation overreach | `[ ]` |
-| Documentation polish | `[ ]` |
-| Validator gap | `[ ]` |
+| 问题分类 | `[安装/启用 / 首跑入口 / Track / 角色路由 / Gate 证据 / 回写边界 / 适配越界 / 文档 / validator]` |
+| 脱敏结果 | `[PASS / NEEDS_REDACTION / BLOCKED]`（不等同于 Data class） |
+| 建议修复 | `[文档 / 示例 / 模板 / validator / 不修改]` |
+| 建议文件 | `[相对文件名或 none；不公开私人绝对路径]` |
+| 回归输入 | `[可复现问题的 synthetic prompt]` |
+| 验收方法 | `[如何验证修复]` |
+| 知识回写候选 | `[项目内 Lessons / 方法规则候选 / 无]` |
+| Owner 决定 | `[accept / reject / hold / needs more evidence]` |
+| 理由与下一任务 | `[一句理由 + 有限范围任务或 none]` |
 
-## Proposed Follow-Up
-
-| Field | Value |
-|---|---|
-| Proposed fix | `[documentation / example / template / validator / no change]` |
-| Suggested file | `[path or none]` |
-| Regression prompt candidate | `[synthetic prompt that reproduces the issue]` |
-| Acceptance check | `[how to verify the fix]` |
-| Writeback target | `[project-local Lessons / methodology rule candidate / none]` |
-
-## Decision
-
-| Field | Value |
-|---|---|
-| Owner decision | `[accept / reject / hold / needs more evidence]` |
-| Reason | `[one sentence]` |
-| Next task | `[bounded task name or none]` |
-
+只有脱敏结果为 `PASS`、并经人工审核的材料才进入公开 examples 或 validation；`NEEDS_REDACTION` 先改写复核，`BLOCKED` 不进入公开材料。
