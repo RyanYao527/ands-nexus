@@ -95,7 +95,7 @@ class WorkflowTests(unittest.TestCase):
         self.worker = FakeWorker()
         self.connector = FakeConnector()
         self.engine = Engine(self.root, self.worker, self.connector)
-        self.wf = self.engine.init('Prepare a synthetic adoption proposal')['id']
+        self.wf = self.engine.init('Prepare a synthetic adoption proposal', execution_mode='restricted-native')['id']
 
     def planned(self):
         result = self.engine.plan(self.wf)
@@ -182,7 +182,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(fresh.run(self.wf)['worker_invocations'], previous)
 
     def test_git_remote_closed_is_not_human_acceptance(self):
-        self.wf = self.engine.init('Synthetic proposal', repo='example/project')['id']
+        self.wf = self.engine.init('Synthetic proposal', repo='example/project', execution_mode='restricted-native')['id']
         self.approved()
         state = self.engine.run(self.wf)
         self.assertEqual(state['status'], 'awaiting_acceptance')
@@ -191,7 +191,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(len(state['decisions']), 1)
 
     def test_partial_assignment_failure_does_not_recreate_issue(self):
-        self.wf = self.engine.init('Synthetic proposal', repo='example/project', members={'owner': 'octocat'})['id']
+        self.wf = self.engine.init('Synthetic proposal', repo='example/project', members={'owner': 'octocat'}, execution_mode='restricted-native')['id']
         original = self.worker.invoke
         def assigned_plan(kind, payload, **kwargs):
             result = original(kind, payload, **kwargs)
@@ -235,7 +235,7 @@ class WorkflowTests(unittest.TestCase):
             self.engine.init('Bad input', inputs=[self.root])
 
     def test_uncertain_persisted_operation_only_reconciles(self):
-        self.wf = self.engine.init('Synthetic proposal', repo='example/project')['id']
+        self.wf = self.engine.init('Synthetic proposal', repo='example/project', execution_mode='restricted-native')['id']
         state = self.approved()
         op_id = self.wf + '-t1-create_issue'
         payload = {'title': state['tasks'][0]['title'], 'body': 'Goal: ' + state['goal'] + '\n\nAcceptance:\n- Explain the goal and pending decisions\n\nExecutor: agent'}
@@ -299,7 +299,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertIsNone(self.engine.status(self.wf)['approval'])
 
     def test_connector_preflight_counts_toward_budget_before_any_write(self):
-        self.wf = self.engine.init('Synthetic proposal', repo='example/project')['id']
+        self.wf = self.engine.init('Synthetic proposal', repo='example/project', execution_mode='restricted-native')['id']
         state = self.approved()
         clock = [100.0]
         self.connector.preflight = lambda: clock.__setitem__(0, clock[0] + 1.0)

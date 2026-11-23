@@ -1,6 +1,20 @@
 # Release Notes
 
+## 0.5.0-alpha.2 — Codex-hosted Loop
+
+Owner 已批准由当前受信任的 Codex 会话主持 Loop：规划、文档生成、独立审阅和 Lessons 通过 `next` / `respond` 与本地控制程序衔接，不新增模型服务或嵌套 CLI 调用。
+
+- `init --execution-mode codex-hosted` 是新流程默认路线；请求绑定 ID、哈希、版本、快照、范围和期限，响应导入后保留收据和实际产物哈希。
+- 当前 Codex 执行宿主请求；审阅请求交给新的独立审阅者。人仍在独立终端执行批准、验收、退回和追加预算命令，`identity_verified=false` 不改。
+- Hosted `stop` 撤销请求并阻止导入和程序动作，不能终止当前 Codex 会话。默认预算是 20 个逻辑请求、每请求 600 秒、累计 1800 秒；待响应宿主等待计时，人的决定或提交等待不计时，恢复不清零。
+- Owner 已指定私有测试仓库 `RyanYao527/ands-nexus-sandbox` 和负责人 `RyanYao527`；Issue 写入仍等待实际计划预览及 Owner 终端批准。
+- native 独立执行路线保持严格工具门槛，原五轮 FAIL、原 96 项 alpha.1 程序测试和所有失败记录保留，不改判为 Hosted 通过。
+
+这是内部 alpha 的获批实现路线，尚未合并或公开发布。当前实际链路、独立审阅、Owner 决定、GitHub 结果及新测试/CI 进度见 [Agent 验证记录](AGENT_VALIDATION.md)；本节不提前宣称新链路或测试通过。
+
 ## 0.5.0-alpha.1 — Internal Agent Prototype
+
+以下为 alpha.1 冻结时的历史状态；后续 Owner 已选择上文 Hosted 路线，历史失败不变。
 
 **当前 Alpha 程序及模拟测试已实现，5 轮真实 CLI 隔离探针均失败，`plan` / `step` / `run` 自动执行不可启用。尚无实际文档生成／交付闭环通过；GitHub 真实写入等待 Owner 指定测试仓库，当前未执行。** 已完成的包检查是机器检查，不能代替真实运行准入。
 

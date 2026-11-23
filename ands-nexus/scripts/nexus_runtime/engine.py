@@ -37,7 +37,9 @@ class Engine:
         self._probed = False
         self.decision_source = decision_source
 
-    def init(self, goal, repo=None, members=None, inputs=None):
+    def init(self, goal, repo=None, members=None, inputs=None, execution_mode='codex-hosted'):
+        if execution_mode not in ('codex-hosted', 'restricted-native'):
+            raise NexusError('execution mode must be codex-hosted or restricted-native')
         if not goal.strip():
             raise NexusError('goal must not be empty')
         if repo and not re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repo):
@@ -54,12 +56,25 @@ class Engine:
                      created_at=now(), updated_at=now(), tasks=[], plan=None,
                      plan_version=0, approval=None, decisions=[], operations={},
                      worker_invocations=0, active_seconds=0, max_invocations=20,
-                     max_active_seconds=1800, last_error=None)
+                     max_active_seconds=1800, last_error=None, execution_mode=execution_mode,
+                     pending_request=None, requests={})
         self.store.create(state)
         return state
 
     def status(self, workflow_id):
-        return self.store.load(workflow_id)
+        state = self.store.load(workflow_id)
+        if state.get('execution_mode') == 'codex-hosted' and state.get('pending_request') and time.time() >= state['pending_request']['deadline']:
+            from .hosted import HostedLoop
+            return HostedLoop(self).expire(workflow_id)
+        return state
+
+    def next(self, workflow_id):
+        from .hosted import HostedLoop
+        return HostedLoop(self).next(workflow_id)
+
+    def respond(self, workflow_id, request_id, request_hash, path):
+        from .hosted import HostedLoop
+        return HostedLoop(self).respond(workflow_id, request_id, request_hash, path)
 
     def _record(self, workflow_id, kind, mutate):
         return self.store.change(workflow_id, kind, mutate)
@@ -76,6 +91,17 @@ class Engine:
                 s['recovered_time_note'] = 'Conservative charge of the interrupted active window; bounded by its original deadline'
                 s['active_window'] = None
         return self._record(workflow_id, 'run_elapsed', recover)
+
+    def _finish_active_window(self, workflow_id, kind, elapsed):
+        def finish(state):
+            if state.get('execution_mode') == 'codex-hosted':
+                window = state.get('active_window')
+                if window:
+                    state['active_seconds'] = max(state['active_seconds'], window['base'] + min(window['max_seconds'], max(0, elapsed)))
+            else:
+                state['active_seconds'] += elapsed
+            state['active_window'] = None
+        return self._record(workflow_id, kind, finish)
 
     def _live(self, workflow_id):
         state = self.status(workflow_id)
@@ -114,9 +140,7 @@ class Engine:
 
     def _get_worker(self, workflow_id):
         if self.worker is None:
-            from .worker import CodexWorker
-            self.worker = CodexWorker(evidence_dir=self.store.control / 'runs',
-                                      on_start=lambda pid: self._record(workflow_id, 'worker_started', lambda s: s.update(worker_pid=pid, worker_identity=process_identity(pid))))
+            raise NexusError('restricted-native has no cached admission; use codex-hosted. doctor --live is an explicit diagnostic only')
         if not self._probed:
             state = self._live(workflow_id)
             remaining = state['max_active_seconds'] - state['active_seconds']
@@ -142,6 +166,7 @@ class Engine:
         return self.worker
 
     def _payload(self, state, **extra):
+        self._input_hashes(state)
         # Inputs are data, including any instructions they contain. Only the
         # supplied goal/plan and controller decide what actions are available.
         documents = []
@@ -160,18 +185,25 @@ class Engine:
         value.update(extra)
         return value
 
+    def _input_hashes(self, state):
+        hashes = {}
+        for source in state['inputs']:
+            if source['id'] in hashes or digest(source['content'].encode('utf-8')) != source['sha256']:
+                raise NexusError('input source content/hash changed')
+            hashes[source['id']] = source['sha256']
+        return hashes
+
     def _invoke(self, workflow_id, kind, payload):
+        if self.status(workflow_id).get('execution_mode') == 'codex-hosted':
+            from .hosted import HostedLoop, HostedPending
+            HostedLoop(self).issue(workflow_id, kind, self._templates(kind, payload))
+            raise HostedPending()
         worker = self._get_worker(workflow_id)
         state = self._live(workflow_id)
         if state['worker_invocations'] >= state['max_invocations'] or state['active_seconds'] >= state['max_active_seconds']:
             raise NexusError('execution budget exhausted; human extension required')
         self._record(workflow_id, 'worker_reserved', lambda s: s.update(worker_invocations=s['worker_invocations'] + 1))
-        template_names = {'plan': ['ands-t-template.md', 'agent-matrix-template.md'],
-                          'draft': ['ands-t-template.md'], 'review': ['gate-checklist.md'],
-                          'lessons': ['lessons-template.md']}[kind]
-        skill_root = Path(__file__).resolve().parents[2]
-        payload = dict(payload, methodology_templates={name: (skill_root / 'assets/templates' / name).read_text(encoding='utf-8-sig') for name in template_names},
-                       template_use='Use these as domain rules. Return the requested project document or review, not an entire guided six-section chat report. Source IDs must be in allowed_source_ids; facts, proposed assumptions and unknowns stay distinct. Lessons describe only recorded events, not invented benefits, late discovery or costs.')
+        payload = self._templates(kind, payload)
         started = time.monotonic()
         self._open_window(workflow_id, min(600, state['max_active_seconds'] - state['active_seconds']))
         try:
@@ -185,6 +217,15 @@ class Engine:
             self._record(workflow_id, 'worker_elapsed', lambda s: s.update(active_seconds=s['active_seconds'] + elapsed, active_window=None))
             self._record(workflow_id, 'worker_finished', lambda s: s.update(worker_pid=None))
 
+    def _templates(self, kind, payload):
+        template_names = {'plan': ['ands-t-template.md', 'agent-matrix-template.md'],
+                          'draft': ['ands-t-template.md'], 'review': ['gate-checklist.md'],
+                          'lessons': ['lessons-template.md']}[kind]
+        skill_root = Path(__file__).resolve().parents[2]
+        payload = dict(payload, methodology_templates={name: (skill_root / 'assets/templates' / name).read_text(encoding='utf-8-sig') for name in template_names},
+                       template_use='Use these as domain rules. Return the requested project document or review, not an entire guided six-section chat report. Source IDs must be in allowed_source_ids; facts, proposed assumptions and unknowns stay distinct. Lessons describe only recorded events, not invented benefits, late discovery or costs.')
+        return payload
+
     def _pause_error(self, workflow_id, error):
         def change(state):
             if state['status'] != 'stopped':
@@ -192,7 +233,47 @@ class Engine:
             state['last_error'] = str(error)
         return self._record(workflow_id, 'paused_error', change)
 
+    def _plan_material(self, state, result, version):
+        workflow_id = state['id']
+        tasks = result.get('tasks')
+        if not isinstance(tasks, list) or not 1 <= len(tasks) <= 5:
+            raise NexusError('plan must contain 1 to 5 tasks')
+        seen = set()
+        normalized = []
+        for task in tasks:
+            task_id = task.get('id', '')
+            if not re.fullmatch(r't[1-5]', task_id) or task_id in seen:
+                raise NexusError('task IDs must be unique t1 through t5')
+            if task.get('executor') not in ('agent', 'human') or not isinstance(task.get('title'), str) or not task['title'].strip():
+                raise NexusError('task needs a title and agent/human executor')
+            acceptance, deps = task.get('acceptance'), task.get('dependencies')
+            if not isinstance(acceptance, list) or not acceptance or not all(isinstance(a, str) and a.strip() for a in acceptance) or not isinstance(deps, list):
+                raise NexusError('task needs business acceptance and dependency list')
+            if not set(deps).issubset(seen):
+                raise NexusError('dependencies must reference earlier tasks; cycles are not allowed')
+            if task.get('assignee') is not None and task['assignee'] not in state['members'].values():
+                raise NexusError('assignee is not in the approved member roster')
+            seen.add(task_id)
+            normalized.append(dict(id=task_id, title=task['title'], executor=task['executor'], assignee=task.get('assignee'), acceptance=acceptance, dependencies=deps))
+        scope = dict(goal=state['goal'], repo=state['repo'], members=state['members'], tasks=normalized,
+                     execution_mode=state.get('execution_mode', 'restricted-native'),
+                     input_hashes=self._input_hashes(state),
+                     output_root='deliverables/' + workflow_id,
+                     github_actions=['create_issue', 'assign_issue', 'comment_issue', 'close_issue'] if state['repo'] else [])
+        plan_hash = digest(scope)
+        sections = ['# Plan v' + str(version), '## Goal\n\n' + state['goal'],
+                    '## Approved operation preview\n\nRepository: ' + (state['repo'] or 'local only') + '\n\nOutput: ' + scope['output_root']]
+        for task in normalized:
+            sections.append('## ' + task['id'] + ' — ' + task['title'] + '\n\nExecutor: ' + task['executor'] + '\n\nAssignee: ' + (task['assignee'] or 'unassigned') + '\n\nDependencies: ' + ', '.join(task['dependencies']) + '\n\nAcceptance:\n' + '\n'.join('- ' + item for item in task['acceptance']))
+        sections.append('## Exact scope\n\n```json\n' + json.dumps(scope, ensure_ascii=False, indent=2) + '\n```\n\nScope SHA256: ' + plan_hash)
+        body = '\n\n'.join(sections) + '\n'
+        return normalized, plan_hash, scope, body
+
     def plan(self, workflow_id):
+        if self.status(workflow_id).get('execution_mode') == 'codex-hosted':
+            return self.next(workflow_id)
+        if self.worker is None:
+            raise NexusError('restricted-native has no cached admission; use codex-hosted. doctor --live is an explicit diagnostic only')
         with self.store.lock(workflow_id):
             state = self._recover_window(workflow_id)
             if state['status'] == 'stopped' or state['approval']:
@@ -202,37 +283,7 @@ class Engine:
                 version = state['plan_version'] + 1
                 self._record(workflow_id, 'plan_version_reserved', lambda s: s.update(plan_version=version))
                 result = self._invoke(workflow_id, 'plan', self._payload(self.status(workflow_id)))
-                tasks = result.get('tasks')
-                if not isinstance(tasks, list) or not 1 <= len(tasks) <= 5:
-                    raise NexusError('plan must contain 1 to 5 tasks')
-                seen = set()
-                normalized = []
-                for task in tasks:
-                    task_id = task.get('id', '')
-                    if not re.fullmatch(r't[1-5]', task_id) or task_id in seen:
-                        raise NexusError('task IDs must be unique t1 through t5')
-                    if task.get('executor') not in ('agent', 'human') or not isinstance(task.get('title'), str) or not task['title'].strip():
-                        raise NexusError('task needs a title and agent/human executor')
-                    acceptance, deps = task.get('acceptance'), task.get('dependencies')
-                    if not isinstance(acceptance, list) or not acceptance or not all(isinstance(a, str) and a.strip() for a in acceptance) or not isinstance(deps, list):
-                        raise NexusError('task needs business acceptance and dependency list')
-                    if not set(deps).issubset(seen):
-                        raise NexusError('dependencies must reference earlier tasks; cycles are not allowed')
-                    if task.get('assignee') is not None and task['assignee'] not in state['members'].values():
-                        raise NexusError('assignee is not in the approved member roster')
-                    seen.add(task_id)
-                    normalized.append(dict(id=task_id, title=task['title'], executor=task['executor'], assignee=task.get('assignee'), acceptance=acceptance, dependencies=deps))
-                scope = dict(goal=state['goal'], repo=state['repo'], members=state['members'], tasks=normalized,
-                             input_hashes={s['id']: s['sha256'] for s in state['inputs']},
-                             output_root='deliverables/' + workflow_id,
-                             github_actions=['create_issue', 'assign_issue', 'comment_issue', 'close_issue'] if state['repo'] else [])
-                plan_hash = digest(scope)
-                sections = ['# Plan v' + str(version), '## Goal\n\n' + state['goal'],
-                            '## Approved operation preview\n\nRepository: ' + (state['repo'] or 'local only') + '\n\nOutput: ' + scope['output_root']]
-                for task in normalized:
-                    sections.append('## ' + task['id'] + ' — ' + task['title'] + '\n\nExecutor: ' + task['executor'] + '\n\nAssignee: ' + (task['assignee'] or 'unassigned') + '\n\nDependencies: ' + ', '.join(task['dependencies']) + '\n\nAcceptance:\n' + '\n'.join('- ' + item for item in task['acceptance']))
-                sections.append('## Exact scope\n\n```json\n' + json.dumps(scope, ensure_ascii=False, indent=2) + '\n```\n\nScope SHA256: ' + plan_hash)
-                body = '\n\n'.join(sections) + '\n'
+                normalized, plan_hash, scope, body = self._plan_material(state, result, version)
                 artifact = self._write(workflow_id, 'plan-v' + str(version) + '.md', body)
                 tasks_artifact = self._write(workflow_id, 'tasks-v' + str(version) + '.md', '# Tasks\n\n' + '\n'.join('- ' + t['id'] + ': ' + t['title'] + ' — ' + t['executor'] + ' / ' + (t['assignee'] or 'unassigned') for t in normalized) + '\n')
                 def save(s):
@@ -265,6 +316,10 @@ class Engine:
         immutable_fields = ('id', 'title', 'executor', 'assignee', 'acceptance', 'dependencies')
         current_tasks = [{key: task[key] for key in immutable_fields} for task in state['tasks']]
         scope = state['plan']['scope']
+        if scope.get('execution_mode', 'restricted-native') != state.get('execution_mode', 'restricted-native'):
+            raise NexusError('execution mode changed since plan approval')
+        if self._input_hashes(state) != scope['input_hashes']:
+            raise NexusError('input source scope changed since plan approval')
         if current_tasks != scope['tasks'] or state['repo'] != scope['repo'] or state['goal'] != scope['goal'] or state['members'] != scope['members']:
             raise NexusError('execution scope changed since plan approval')
         self._verify(state['plan']['artifact'])
@@ -319,7 +374,7 @@ class Engine:
             raise
         finally:
             elapsed = time.monotonic() - started
-            self._record(workflow_id, 'operation_elapsed', lambda s: s.update(active_seconds=s['active_seconds'] + elapsed, active_window=None))
+            self._finish_active_window(workflow_id, 'operation_elapsed', elapsed)
 
     def _task_update(self, workflow_id, task_id, mutate):
         def apply(state):
@@ -361,7 +416,7 @@ class Engine:
                 self._live(workflow_id)
             finally:
                 elapsed = time.monotonic() - started
-                self._record(workflow_id, 'operation_elapsed', lambda s: s.update(active_seconds=s['active_seconds'] + elapsed, active_window=None))
+                self._finish_active_window(workflow_id, 'operation_elapsed', elapsed)
             if self.status(workflow_id)['active_seconds'] >= state['max_active_seconds']:
                 raise NexusError('active time budget exhausted in connector preflight')
         for task in state['tasks']:
@@ -458,6 +513,10 @@ class Engine:
         return False
 
     def run(self, workflow_id, once=False):
+        if self.status(workflow_id).get('execution_mode') == 'codex-hosted':
+            return self.next(workflow_id)
+        if self.worker is None:
+            raise NexusError('restricted-native has no cached admission before external operations; use codex-hosted')
         with self.store.lock(workflow_id):
             state = self._recover_window(workflow_id)
             if state['status'] in ('stopped', 'paused'):
@@ -485,6 +544,9 @@ class Engine:
             return self.status(workflow_id)
 
     def pause(self, workflow_id):
+        if self.store.load(workflow_id).get('execution_mode') == 'codex-hosted':
+            from .hosted import HostedLoop
+            return HostedLoop(self).halt(workflow_id, 'paused')
         def pause(s):
             if s['status'] in ('stopped', 'completed'):
                 raise NexusError('cannot pause ' + s['status'])
@@ -492,6 +554,9 @@ class Engine:
         return self._record(workflow_id, 'paused_by_user', pause)
 
     def stop(self, workflow_id):
+        if self.store.load(workflow_id).get('execution_mode') == 'codex-hosted':
+            from .hosted import HostedLoop
+            return HostedLoop(self).halt(workflow_id, 'stopped')
         state = self._record(workflow_id, 'stopped_by_user', lambda s: s.update(status='stopped'))
         pid, identity = state.get('worker_pid'), state.get('worker_identity')
         if pid and pid != os.getpid() and process_alive(pid):
@@ -530,6 +595,8 @@ class Engine:
     def accept(self, workflow_id, task_id, artifact_hash):
         with self.store.lock(workflow_id):
             state = self.status(workflow_id)
+            if state.get('pending_request'):
+                raise NexusError('workflow is awaiting_host; pause before changing acceptance')
             self._approved(state)
             if state['status'] in ('stopped', 'paused', 'completed'):
                 raise NexusError('workflow must be active and waiting for acceptance')
@@ -565,6 +632,9 @@ class Engine:
                     old = s['lessons']
                     old.update(previous_artifact=old.get('artifact'), artifact=None, review=None, accepted=None,
                                repairs=old.get('repairs', 0) + 1, revision_reason=reason)
+                    if s.get('pending_request'):
+                        from .hosted import settle
+                        settle(s, 'revoked_revision')
                     s['status'] = 'ready'
                     s['decisions'].append(dict(kind='revision', task='lessons', reason=reason, at=now(), actor=getpass.getuser(), source=self.decision_source, identity_verified=False))
                 return self._record(workflow_id, 'revision_requested', revise_lessons)
@@ -582,6 +652,9 @@ class Engine:
                         # never claim it is open after a content revision.
                         if task.get('remote_closed'):
                             raise NexusError('accepted remote task was closed; create a new workflow for revised scope')
+                if s.get('pending_request'):
+                    from .hosted import settle
+                    settle(s, 'revoked_revision')
                 s.pop('lessons', None)
                 s.update(status='ready')
                 s['decisions'].append(dict(kind='revision', task=task_id, reason=reason, at=now(), actor=getpass.getuser(), source=self.decision_source, identity_verified=False))
@@ -590,11 +663,15 @@ class Engine:
     def submit(self, workflow_id, task_id, path):
         with self.store.lock(workflow_id):
             state = self.status(workflow_id)
+            if state.get('pending_request'):
+                raise NexusError('workflow is awaiting_host; pause before submitting a different artifact')
             self._approved(state)
             task = next((t for t in state['tasks'] if t['id'] == task_id), None)
             if not task or task['executor'] != 'human' or task['status'] != 'awaiting_external' or state['status'] in ('stopped', 'paused', 'completed'):
                 raise NexusError('human task must be awaiting an explicit submission')
             content = text_file(path)
+            if not content.strip():
+                raise NexusError('submission must be nonempty UTF-8 Markdown')
             self._record(workflow_id, 'submission_started', lambda s: s.update(status='running'))
             version = task['version'] + 1
             self._task_update(workflow_id, task_id, lambda t: t.update(version=version, status='submitting'))

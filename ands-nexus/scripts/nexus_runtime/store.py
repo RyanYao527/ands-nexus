@@ -93,6 +93,9 @@ class Store:
                 CREATE TABLE IF NOT EXISTS workflows(id TEXT PRIMARY KEY, data TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS events(seq INTEGER PRIMARY KEY, workflow_id TEXT, at TEXT, kind TEXT, data TEXT);
                 CREATE TABLE IF NOT EXISTS locks(workflow_id TEXT PRIMARY KEY, pid INTEGER, token TEXT);
+                CREATE TABLE IF NOT EXISTS hosted_failures(
+                    workflow_id TEXT, request_id TEXT, request_hash TEXT, response_sha256 TEXT, receipt TEXT NOT NULL,
+                    PRIMARY KEY(workflow_id,request_id,request_hash,response_sha256));
             ''')
 
     @contextmanager
@@ -117,6 +120,18 @@ class Store:
             raise NexusError('unknown workflow: ' + workflow_id)
         return json.loads(row[0])
 
+    def hosted_failure(self, workflow_id, request_id, request_hash, response_sha256):
+        with self.connect() as db:
+            row = db.execute('SELECT receipt FROM hosted_failures WHERE workflow_id=? AND request_id=? AND request_hash=? AND response_sha256=?',
+                             (workflow_id, request_id, request_hash, response_sha256)).fetchone()
+        return json.loads(row[0]) if row else None
+
+    def remember_hosted_failure(self, workflow_id, request_id, request_hash, response_sha256, receipt):
+        with self.connect() as db:
+            db.execute('INSERT OR IGNORE INTO hosted_failures VALUES (?,?,?,?,?)',
+                       (workflow_id, request_id, request_hash, response_sha256, json.dumps(receipt, ensure_ascii=False)))
+        return self.hosted_failure(workflow_id, request_id, request_hash, response_sha256)
+
     def change(self, workflow_id, kind, mutate):
         with self.connect() as db:
             db.execute('BEGIN IMMEDIATE')
@@ -126,7 +141,7 @@ class Store:
             state = json.loads(row[0])
             previous = json.loads(row[0])
             allowed_after_halt = {'stopped_by_user', 'paused_error', 'worker_elapsed', 'probe_elapsed',
-                                  'operation_done', 'operation_error', 'operation_elapsed', 'remote_observed', 'worker_finished', 'run_elapsed'}
+                                  'operation_done', 'operation_error', 'operation_elapsed', 'remote_observed', 'worker_finished', 'run_elapsed', 'hosted_request_expired'}
             if state['status'] == 'stopped' and kind not in allowed_after_halt:
                 raise NexusError('stopped workflow cannot advance')
             if state['status'] == 'paused' and kind not in allowed_after_halt | {'resumed', 'paused_by_user'}:
@@ -152,7 +167,8 @@ class Store:
                 raise NexusError('workflow already has an active writer')
             workflow = db.execute('SELECT data FROM workflows WHERE id=?', (workflow_id,)).fetchone()
             if workflow:
-                child = json.loads(workflow[0]).get('worker_pid')
+                data = json.loads(workflow[0])
+                child = data.get('worker_pid') if data.get('execution_mode', 'restricted-native') == 'restricted-native' else None
                 if child and process_alive(child):
                     raise NexusError('orphan worker still active; stop that recorded process before recovery')
             db.execute('INSERT OR REPLACE INTO locks VALUES (?,?,?)', (workflow_id, os.getpid(), token))

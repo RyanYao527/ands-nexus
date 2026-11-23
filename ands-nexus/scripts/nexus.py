@@ -25,7 +25,8 @@ def main():
     init.add_argument('--repo')
     init.add_argument('--member', action='append', default=[], metavar='ROLE=LOGIN')
     init.add_argument('--input', action='append', default=[], type=Path)
-    for name in ('status', 'plan', 'step', 'run', 'sync', 'pause', 'stop'):
+    init.add_argument('--execution-mode', choices=('codex-hosted', 'restricted-native'), default='codex-hosted')
+    for name in ('status', 'plan', 'step', 'run', 'next', 'sync', 'pause', 'stop'):
         command = commands.add_parser(name)
         command.add_argument('workflow_id')
     approve = commands.add_parser('approve', help='Human-only: approve exactly the displayed plan')
@@ -44,6 +45,11 @@ def main():
     submit.add_argument('workflow_id')
     submit.add_argument('--task', required=True)
     submit.add_argument('--path', required=True, type=Path)
+    respond = commands.add_parser('respond', help='Import a hosted result; never records owner approval')
+    respond.add_argument('workflow_id')
+    respond.add_argument('--request', required=True)
+    respond.add_argument('--request-hash', required=True)
+    respond.add_argument('--path', required=True, type=Path)
     resume = commands.add_parser('resume')
     resume.add_argument('workflow_id')
     resume.add_argument('--extra-invocations', default=0, type=int)
@@ -65,7 +71,7 @@ def main():
                 if role in members:
                     raise NexusError('duplicate member role')
                 members[role] = login
-            value = engine.init(args.goal, repo=args.repo, members=members, inputs=args.input)
+            value = engine.init(args.goal, repo=args.repo, members=members, inputs=args.input, execution_mode=args.execution_mode)
         elif args.command == 'doctor':
             skill_root = Path(__file__).resolve().parent.parent
             value = {'skill_version': (skill_root / 'VERSION').read_text(encoding='utf-8-sig').strip(),
@@ -85,6 +91,8 @@ def main():
             value = engine.revise(args.workflow_id, args.task, args.reason)
         elif args.command == 'submit':
             value = engine.submit(args.workflow_id, args.task, args.path)
+        elif args.command == 'respond':
+            value = engine.respond(args.workflow_id, args.request, args.request_hash, args.path)
         elif args.command == 'resume':
             value = engine.resume(args.workflow_id, args.extra_invocations, args.extra_seconds)
         elif args.command == 'step':
@@ -96,7 +104,7 @@ def main():
         print(json.dumps(value, ensure_ascii=False, indent=2))
         return 3 if value.get('status') == 'paused' and value.get('last_error') else 0
     except (NexusError, OSError, ValueError, RuntimeError, sqlite3.Error) as error:
-        print(str(error), file=sys.stderr)
+        print(json.dumps({'receipt': error.failure_receipt}, ensure_ascii=False) if getattr(error, 'failure_receipt', None) else str(error), file=sys.stderr)
         return 2
 
 

@@ -1,6 +1,6 @@
 ---
 name: ands-nexus
-description: "Use when teams adopt or practice AI-Native Development System (ANDS): task cards, Track/Gate decisions, Agent roles, team standards and pilots, training, metrics, and Lessons. Also use for the explicitly requested local Codex task-and-document Agent with versioned human approval and scoped GitHub coordination."
+description: "Use when teams adopt or practice AI-Native Development System (ANDS): task cards, Track/Gate decisions, Agent roles, team standards and pilots, training, metrics, and Lessons. Also use for the explicitly requested Codex-hosted task-and-document Loop with versioned human approval and scoped GitHub coordination."
 ---
 
 # ANDS Nexus
@@ -9,11 +9,11 @@ Use this skill to help teams understand, adopt, practice, or review AI-Native De
 
 ## Agent Mode (Opt In)
 
-Current alpha status: the program and simulated tests are implemented, but five real restricted-worker probe rounds failed. Automatic plan/step/run execution is closed; no real document-generation/delivery loop has passed. Do not dispatch another worker or bypass the strict tool-event rejection to continue. Live GitHub writes await an Owner-designated test repository and have not run. Preserve the prompt-only path; no alternative execution route is enabled without the pending Owner decision.
+In alpha.2 the Owner-approved `codex-hosted` route uses the current trusted Codex as planner, drafter and Lessons author. It calls a fresh independent reviewer for review requests. The local controller owns checkpoints, canonical artifacts, budgets and approved GitHub actions. Do not launch a nested model process or repeat the old native probes for this route. The native route's five isolation failures remain failures; that strict gate is unchanged.
 
-When the user explicitly requests a persistent task-and-document Agent, read `references/agent-workflow.md` first. `scripts/nexus.py` implements the local Markdown and scoped GitHub interfaces, but current automatic admission is closed as stated above. Use the runtime's state and actual artifact checks instead of treating generated Next Prompt prose as authority. Prompt-only guidance remains the default when Agent operation is not requested.
+When the user explicitly requests a persistent task-and-document Agent, read `references/agent-workflow.md` first. Use `scripts/nexus.py` with `init --execution-mode codex-hosted`, then `next` and `respond`. Produce the raw JSON required by the returned pending request's schema; submit it with that request's ID and hash. After an applied receipt, call `next` again until the controller waits for an operator decision, a person’s submission or a limit. Do not invent an independent review or substitute your own draft approval for an actual new review. If an independent reviewer is unavailable, report the blocked request. Prompt-only guidance remains the default when Agent operation is not requested.
 
-The human reviews the current plan or artifact and enters `approve`, `accept`, or `revise` in their own foreground terminal. Show the exact command and required version/hash; never run those commands or budget extensions for the human, infer their approval from chat examples, or turn an Issue comment or closure into acceptance. Interactive-terminal checks do not authenticate human identity; creating a PTY does not authorize the outer agent to act as the operator. Only continue actions covered by the recorded plan approval. If worker isolation is unavailable, stop automatic execution and report the failed preflight.
+The human reviews the current plan or artifact and enters `approve`, `accept`, or `revise` in their own foreground terminal. Show the exact command and required version/hash; never run those commands or budget extensions for the human, infer their approval from chat examples, or turn an Issue comment or closure into acceptance. Interactive-terminal checks do not authenticate human identity; creating a PTY does not authorize the outer agent to act as the operator. Only continue actions covered by the recorded plan approval. In hosted mode `stop` revokes pending requests and blocks controller imports/actions; it cannot terminate the trusted Codex session. Observe the stopped state and stop hosting that workflow.
 
 ## Workflow
 
