@@ -12,6 +12,24 @@ permissions:
   contents: read
 
 jobs:
+  agent-runtime:
+    name: Test Agent runtime (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run bounded runtime tests
+        run: python -m unittest discover -s tests -p "test_nexus*.py" -v
+
   validate:
     name: Validate ANDS Nexus package
     runs-on: ubuntu-latest

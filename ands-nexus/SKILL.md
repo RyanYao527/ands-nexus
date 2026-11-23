@@ -1,11 +1,19 @@
 ---
 name: ands-nexus
-description: "Use when helping teams adopt or practice AI-Native Development System (ANDS): organization-level AI-native software development standards, ANDS-K/T/A/W/G, AI-as-employee operating model, Obsidian knowledge systems, GitHub execution database, AI Agent matrices, AI Gateway concepts, ANDS-T task writing, Track selection, Gate governance, release asset snapshots, Lessons writeback, metrics, internal rollout plans, workshops, and management briefings."
+description: "Use when teams adopt or practice AI-Native Development System (ANDS): task cards, Track/Gate decisions, Agent roles, team standards and pilots, training, metrics, and Lessons. Also use for the explicitly requested local Codex task-and-document Agent with versioned human approval and scoped GitHub coordination."
 ---
 
 # ANDS Nexus
 
 Use this skill to help teams understand, adopt, practice, or review AI-Native Development System (ANDS). Keep answers operational: produce decisions, routes, plans, templates, checklists, or review notes instead of long course-style explanations.
+
+## Agent Mode (Opt In)
+
+Current alpha status: the program and simulated tests are implemented, but five real restricted-worker probe rounds failed. Automatic plan/step/run execution is closed; no real document-generation/delivery loop has passed. Do not dispatch another worker or bypass the strict tool-event rejection to continue. Live GitHub writes await an Owner-designated test repository and have not run. Preserve the prompt-only path; no alternative execution route is enabled without the pending Owner decision.
+
+When the user explicitly requests a persistent task-and-document Agent, read `references/agent-workflow.md` first. `scripts/nexus.py` implements the local Markdown and scoped GitHub interfaces, but current automatic admission is closed as stated above. Use the runtime's state and actual artifact checks instead of treating generated Next Prompt prose as authority. Prompt-only guidance remains the default when Agent operation is not requested.
+
+The human reviews the current plan or artifact and enters `approve`, `accept`, or `revise` in their own foreground terminal. Show the exact command and required version/hash; never run those commands or budget extensions for the human, infer their approval from chat examples, or turn an Issue comment or closure into acceptance. Interactive-terminal checks do not authenticate human identity; creating a PTY does not authorize the outer agent to act as the operator. Only continue actions covered by the recorded plan approval. If worker isolation is unavailable, stop automatic execution and report the failed preflight.
 
 ## Workflow
 
@@ -19,6 +27,7 @@ Use this skill to help teams understand, adopt, practice, or review AI-Native De
 
 | User task | Read | Output |
 |---|---|---|
+| Run the opt-in task-and-document Agent | `references/agent-workflow.md` | Versioned plan, actual Markdown artifacts, task links, checks, pending human decisions, and recoverable runtime state |
 | Explain ANDS | `references/overview.md`, `references/glossary.md` | One-page explanation with fit / non-fit boundaries |
 | Plan team adoption | `references/adoption-playbook.md`, `references/governance-and-metrics.md`, `assets/templates/30-day-pilot-template.md`, `examples/management-rollout-plan.md` | 30/60/90-day rollout, pilot plan, risks |
 | Draft ANDS standards | `references/standards-k-t-a-w-g.md` | ANDS-K/T/A/W/G draft or review |
@@ -38,7 +47,7 @@ Use this skill to help teams understand, adopt, practice, or review AI-Native De
 
 If a referenced file or template is missing, state the missing artifact and proceed with the best available concise structure.
 
-If a request matches multiple routing rows, choose the row matching the user's primary ask first, then include only the extra mapped files needed to satisfy explicit secondary asks. Keep non-scope wording explicit when declining expansions: no live provider API integration, no tenant connectors, no unattended or automated writeback, and no benchmark ranking.
+If a request matches multiple routing rows, choose the row matching the user's primary ask first, then include only the extra mapped files needed to satisfy explicit secondary asks. In prompt-only mode, keep non-scope wording explicit when declining expansions: no live provider API integration, no tenant connectors, no unattended or automated writeback, and no benchmark ranking. The opt-in Agent exception covers only runtime-managed project output and the single approved GitHub repository; it does not authorize broader knowledge-base or enterprise-system changes.
 
 ## Output Level
 
@@ -67,6 +76,6 @@ Before answering, verify that the output:
 
 ## Gate 5 / Knowledge Writeback
 
-When the answer produces reusable knowledge, suggest where it should be written back: Technical, Prompt, Product, Decision, or Lessons. Do not modify a knowledge base unless the user explicitly asks.
+When the answer produces reusable knowledge, suggest where it should be written back: Technical, Prompt, Product, Decision, or Lessons. Agent-generated Lessons stay project-local candidates; promotion to a shared knowledge base is a separate human decision. Do not modify a knowledge base unless the user explicitly asks.
 
-For Obsidian writeback drafts, keep project facts in the project first. Boundary wording: no unattended or automated writeback; user-invoked draft generation to one human-specified local draft path is allowed only when explicitly requested. If script automation is appropriate, use `scripts/new_writeback_note.ps1` only to generate a draft or write an explicitly provided output path; do not scan or bulk-modify a Vault.
+For prompt-only Obsidian writeback drafts, keep project facts in the project first. Boundary wording: no unattended or automated writeback; user-invoked draft generation to one human-specified local draft path is allowed only when explicitly requested. If script automation is appropriate, use `scripts/new_writeback_note.ps1` only to generate a draft or write an explicitly provided output path; do not scan or bulk-modify a Vault. Opt-in Agent writes follow the recorded current plan and the narrower rules in `references/agent-workflow.md`.

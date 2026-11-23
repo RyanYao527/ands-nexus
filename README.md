@@ -6,6 +6,20 @@
 
 **本版以 Codex 为首发支持。** Claude Code 的安装说明保留，但本次测试的 Claude Code 2.1.304 + DeepSeek 配置未通过交接练习：旧提示文字可能覆盖新确认，导致 Lessons 未生成。其他 Claude 配置未实测。详见[验证摘要](VALIDATION.md)。
 
+## v0.5 Agent 内测分支
+
+**当前状态：Alpha 程序及模拟测试已实现，但 5 轮真实 Codex CLI 隔离探针均未通过，尚不能证实执行角色不具备宿主工具能力。`plan` / `step` / `run` 的自动执行不可启用；尚无真实文档生成与交付闭环通过。GitHub 真实写入等待 Owner 指定测试仓库，当前未执行。** 包检查或模拟边界通过不代替这些结果。
+
+实际探针、程序检查和剩余准入条件见 [Agent 验证记录](AGENT_VALIDATION.md)。
+
+本分支的技能版本为 **0.5.0-alpha.1**，已实现可选 Agent 模式的状态、文件、审批和任务操作程序；其设计目标是在批准范围内生成 Markdown 并协调一个 GitHub 仓库。自动执行准入仍关闭，未作为正式版本发布；下方 v0.4.6 下载入口继续指向上一正式版，不包含 Agent 程序。Owner 尚未选择替代执行路线；本分支没有自行启用其他宿主或新的模型接入。
+
+Agent 模式使用 Python 3.11 及标准库 SQLite、现有 Codex CLI 登录；需要 GitHub 操作时再使用已有 `gh` 登录。先阅读 [Agent 使用说明](ands-nexus/references/agent-workflow.md)和 [内测安装入口](START-HERE.md#agent-内测入口)。初始化只登记明确指定的目录、资料、成员和仓库，不扫描知识库。
+
+计划、分配及允许动作由人预览后在自己的终端批准；产物验收绑定实际文件哈希。Codex 可以提出下一步、执行已授权工作和展示确认命令，不能代用户运行 `approve`、`accept`、`revise` 或追加预算。交互终端检查属于本机操作者约定，不验证人的身份；Codex 能创建 PTY 不等于得到代批准权限。模型总结、GitHub 评论和 Issue 关闭状态均不能代替人验收。
+
+纯提示词模式继续提供原有六段输出和 13 个状态字段。Agent 模式已实现状态保存、单步和有界 Loop 的程序及模拟边界；当前真实自动执行准入失败，不能据此称实际 Loop 已跑通。限制、故障及真实联调范围以本轮实际记录为准，不沿用历史 H 或 v0.4.6 的通过结论。CI 运行程序测试和既有包检查，不自动发布。
+
 ## 快速开始
 
 1. **下载指定版本**：[v0.4.6 Release](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6) · [安装包](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/ands-nexus-v0.4.6.zip) · [SHA256SUMS.txt](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/SHA256SUMS.txt)。不要用 `main` 代替发布版本。
@@ -47,7 +61,7 @@
 
 Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking.
 
-Writeback boundary: user-invoked draft generation to an explicit path is allowed only when explicitly requested. 只生成草稿或写入你明确指定的本地路径，不扫描或批量修改 Vault，不做 GitHub sync、provider workspace 写入或企业系统更新。本包不提供完整课程、生产级 AI Gateway、托管工作流或一键部署平台。
+纯提示词模式的 Writeback boundary: user-invoked draft generation to an explicit path is allowed only when explicitly requested. 只生成草稿或写入你明确指定的本地路径，不扫描或批量修改 Vault，不做 GitHub sync、provider workspace 写入或企业系统更新。Agent 模式的新增范围仅限人批准的项目产物目录和单个 GitHub 仓库，详见 Agent 使用说明。本包不提供完整课程、生产级 AI Gateway、托管工作流或一键部署平台。
 
 ## 维护者验证
 

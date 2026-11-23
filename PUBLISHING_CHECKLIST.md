@@ -1,6 +1,22 @@
 # Publishing Checklist
 
-本清单用于 `ands-nexus` skill 的内部试用、release candidate 准备和公开发布执行检查。本次版本是 `v0.4.6`；发布状态以 [GitHub Release](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6) 为准。较早章节保留历史事实。
+本清单用于 `ands-nexus` skill 的内部试用、release candidate 准备和公开发布执行检查。本分支是 `0.5.0-alpha.1` Agent 内测原型；当前公开正式版仍为 [v0.4.6](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6)。较早章节保留历史事实。
+
+## 0.5.0-alpha.1 Internal Agent
+
+**当前状态：程序及模拟测试已实现，真实 CLI 隔离探针 5 轮均失败，自动 `plan` / `step` / `run` 准入关闭。没有实际生成／交付闭环通过；GitHub 真实写入等待指定测试仓库，未执行。包检查通过只代表机器包检查，不构成自动 Agent 放行。**
+
+- [x] Owner 已选择 Codex 内任务协调与 Markdown 交付、指定本地目录和单个 GitHub 仓库、关键节点终端确认，其余有界推进。
+- [x] 独立分支从 v0.4.6 主线建立；原 Q25 工作区与历史结果保留。
+- [ ] 受限工作进程的结构化生成及工具隔离探针通过（当前 5 轮失败全部保留；严格拒绝工具事件，自动模式关闭）。
+- [ ] 状态、版本批准、实际文件、返工预算、暂停停止与恢复测试通过。
+- [ ] GitHub 模拟边界测试覆盖重复调用、响应丢失、部分成功及操作回查。
+- [ ] Owner 指定真实测试仓库，审阅动作范围后完成正常及恢复两条合成链；未执行时明确记为未运行。
+- [ ] 两个低风险内部文档任务及人的验收记录齐全；没有真人试用时不计通过。
+- [ ] Windows PowerShell / Core 既有包检查、Python 3.11 Windows / Ubuntu 程序测试及对应 CI 通过。
+- [ ] 独立代码复核无未处理阻断，安装及回退说明与实际包一致。
+
+该清单不是 alpha 已通过或正式发布的证明。新模式按实际证据收尾后再决定发布；CI 不执行真实任务写入或自动发布。详见 [Agent 使用说明](ands-nexus/references/agent-workflow.md)。
 
 ## v0.4.6 Student Patch
 
