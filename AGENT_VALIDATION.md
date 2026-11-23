@@ -11,7 +11,8 @@ route, not successful native tool isolation. The native route's five failed
 probes remain failed and its strict gate remains intact.
 
 The hosted handoff is implemented and the latest local suite passed 126 tests.
-Independent targeted review and committed CI are tracked separately. Real
+Independent targeted review passed, and the implementation commit's Windows,
+Ubuntu and package CI passed. Real
 generated-document chains, fresh-reviewer evidence, operator decisions and
 GitHub outcomes must be recorded before they can be counted as passed. No
 live-chain pass, merge or release is asserted here. The stable v0.4.6 prompt-only
@@ -51,6 +52,16 @@ not supply these results. This section will report only completed evidence.
   no nested skill directory, and recovered initialized state in another process.
   This installation check did not call a model or GitHub.
 - Live task plans and actual operator decisions remain separate acceptance work.
+- [CI for implementation commit 428c97b](https://github.com/RyanYao527/ands-nexus/actions/runs/45124925471)
+  passed all three jobs. Windows ran 126 tests; Ubuntu ran 126 with three
+  Windows-only skips. Reporting-only updates have their own PR check status.
+- Seven independent targeted checks passed, including a real abrupt process
+  exit after file creation, stop/response competition, read-only response
+  replays, human mutation boundaries and interrupted-time recovery. These used
+  clearly labeled synthetic fixtures, not actual operator decisions or GitHub.
+- Two actual hosted planning requests produced versioned plan/task files from
+  synthetic sources. Both workflows are awaiting the Owner's terminal plan
+  approval; no Issue write or completed document chain is counted as passed.
 
 At the documentation checkpoint, the manifest groups and 28 skill reference
 paths resolved, and both PowerShell engines passed the existing regression and
@@ -120,8 +131,6 @@ No global account configuration or authentication files were rewritten.
 
 ## Remaining hosted acceptance work
 
-- Complete the approved hosted implementation and verify its current source,
-  with a fresh independent review and the new program/package/CI checks.
 - Preview the actual sandbox plan and obtain the Owner's terminal approval
   before real Issue writes. Record normal and recovery outcomes separately;
   repository authorization does not substitute for scoped task approval.
