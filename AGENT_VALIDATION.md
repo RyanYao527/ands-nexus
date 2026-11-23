@@ -16,9 +16,15 @@ operator's decision commands.
 
 ## Program and package verification
 
-- The final local source run passed **95 tests**: 28 controller tests, 38 mocked
-  GitHub-boundary tests and 29 subprocess/worker tests. Its raw streams are
+- The latest local source run passed **96 tests**: 28 controller tests, 38 mocked
+  GitHub-boundary tests and 30 subprocess/worker tests. Its raw streams are
   retained with the project evidence; CI separately verifies the committed code.
+- The first CI run passed Windows and package checks, but exposed a Linux
+  timing dependency in a shared-deadline test: its child fixture emitted a
+  forbidden tool event before the expected timeout. The replacement tests use
+  a controlled clock, verify the second probe gets only the remaining budget,
+  and fail if that budget is reset. Real subprocess timeout/cancellation tests
+  remain, and the worker implementation and tool rejection policy are unchanged.
 - Both Windows PowerShell 5.1 and PowerShell Core passed the existing release
   regression and package-validation scripts. External quick_validate was not
   supplied and remains explicitly skipped.

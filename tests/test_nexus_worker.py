@@ -357,9 +357,36 @@ class RestrictedWorkerTests(unittest.TestCase):
         self.assertLess(time.monotonic()-started,6)
 
     def test_both_probe_invocations_share_one_deadline(self):
-        delayed=self.worker_module.CodexWorker(evidence_dir=self.root/"probe-timeout",command=[sys.executable,str(self.stub),"--probe-delay"])
-        with self.assertRaisesRegex(self.worker_module.WorkerError,"time|deadline"):
-            delayed.probe(timeout=.35)
+        # Exercise the orchestration budget independently of OS process startup
+        # and forbidden-tool fixtures. Real child timeouts are covered above.
+        now=[100.0]
+        calls=[]
+        def execute(kind,prompt,schema,cancel=None,timeout=600):
+            calls.append((kind,timeout))
+            now[0]+=min(6.0,timeout)
+            if timeout<6.0:
+                raise self.worker_module.WorkerError("Controlled child exceeded its timeout deadline")
+            return {"ok":True} if kind=="probe-normal" else {"available_tools":[],"attempted_tools":[],"observed_nonce":None}
+        with mock.patch.object(self.worker_module.time,"monotonic",side_effect=lambda:now[0]):
+            with mock.patch.object(self.worker,"_execute",side_effect=execute):
+                with self.assertRaisesRegex(self.worker_module.WorkerError,"time|deadline"):
+                    self.worker.probe(timeout=10)
+        self.assertEqual(["probe-normal","probe-inventory"],[kind for kind,_ in calls])
+        self.assertEqual([10.0,4.0],[timeout for _,timeout in calls])
+        self.assertEqual(110.0,now[0])
+
+    def test_expired_shared_deadline_prevents_the_second_probe_invocation(self):
+        now=[100.0]
+        calls=[]
+        def execute(kind,prompt,schema,cancel=None,timeout=600):
+            calls.append(kind)
+            now[0]+=10.1
+            return {"ok":True}
+        with mock.patch.object(self.worker_module.time,"monotonic",side_effect=lambda:now[0]):
+            with mock.patch.object(self.worker,"_execute",side_effect=execute):
+                with self.assertRaisesRegex(self.worker_module.WorkerError,"shared deadline"):
+                    self.worker.probe(timeout=10)
+        self.assertEqual(["probe-normal"],calls)
 
     def test_plan_rejects_more_than_five_tasks_before_execution(self):
         with self.assertRaisesRegex(self.worker_module.WorkerError, "five|5|schema|tasks"):
