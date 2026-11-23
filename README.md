@@ -6,6 +6,20 @@
 
 **本版以 Codex 为首发支持。** Claude Code 的安装说明保留，但本次测试的 Claude Code 2.1.304 + DeepSeek 配置未通过交接练习：旧提示文字可能覆盖新确认，导致 Lessons 未生成。其他 Claude 配置未实测。详见[验证摘要](VALIDATION.md)。
 
+## v0.5 Agent 内测分支
+
+**本分支为 0.5.0-alpha.2 Codex 主持 Loop 内测版。** Owner 已批准由当前受信任的 Codex 会话规划、生成文档和调用新的独立审阅者，本地程序负责状态、文件、预算、批准和 GitHub 动作。`next` 给出当前请求，`respond` 校验请求 ID、哈希及响应后登记结果。此路线不调用新的模型服务，也不以旧的独立 CLI 隔离探针作为前置。
+
+旧独立 CLI 路线的五轮隔离失败仍是失败，其严格工具门槛保留；没有自动重试或改判。Hosted Loop 的实际交付、真人终端决定和 GitHub 写入结果按本轮证据另记，不借用 alpha.1 的 96 项程序测试或 v0.4.6 的历史通过。当前验证进度见 [Agent 验证记录](AGENT_VALIDATION.md)。
+
+Agent 模式是显式选用的内部原型，尚未公开发布；下方 v0.4.6 下载入口继续指向上一正式版，不包含 Agent 程序。Owner 指定的私有合成联调仓库为 `RyanYao527/ands-nexus-sandbox`，分配对象为 `RyanYao527`；指定仓库不代替当前计划的实际预览和终端批准。
+
+Agent 模式使用当前 Codex、Python 3.11 及标准库 SQLite；需要 GitHub 操作时再使用已有 `gh` 登录。先阅读 [Agent 使用说明](ands-nexus/references/agent-workflow.md)和 [内测安装入口](START-HERE.md#agent-内测入口)。初始化只登记明确指定的目录、资料、成员和仓库，不扫描知识库。`codex-hosted` 是新流程默认的执行模式；保留的 `restricted-native` 模式仍须通过其严格准入，当前环境未通过。
+
+计划、分配及允许动作由人预览后在自己的终端批准；产物验收绑定实际文件哈希。Codex 可以提出下一步、执行已授权工作和展示确认命令，不能代用户运行 `approve`、`accept`、`revise` 或追加预算。交互终端检查属于本机操作者约定，不验证人的身份；Codex 能创建 PTY 不等于得到代批准权限。模型总结、GitHub 评论和 Issue 关闭状态均不能代替人验收。
+
+纯提示词模式继续提供原有六段输出和 13 个状态字段。Hosted Loop 以请求和版本化交付物恢复进度；`stop` 撤销待处理请求并阻止后续导入及程序动作，不会终止当前 Codex 会话。CI 运行程序测试和既有包检查，不自动发布。本轮尚未完成的实际链路、Owner 决定和联调结果不会记为通过。
+
 ## 快速开始
 
 1. **下载指定版本**：[v0.4.6 Release](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6) · [安装包](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/ands-nexus-v0.4.6.zip) · [SHA256SUMS.txt](https://github.com/RyanYao527/ands-nexus/releases/download/v0.4.6/SHA256SUMS.txt)。不要用 `main` 代替发布版本。
@@ -47,7 +61,7 @@
 
 Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking.
 
-Writeback boundary: user-invoked draft generation to an explicit path is allowed only when explicitly requested. 只生成草稿或写入你明确指定的本地路径，不扫描或批量修改 Vault，不做 GitHub sync、provider workspace 写入或企业系统更新。本包不提供完整课程、生产级 AI Gateway、托管工作流或一键部署平台。
+纯提示词模式的 Writeback boundary: user-invoked draft generation to an explicit path is allowed only when explicitly requested. 只生成草稿或写入你明确指定的本地路径，不扫描或批量修改 Vault，不做 GitHub sync、provider workspace 写入或企业系统更新。Agent 模式的新增范围仅限人批准的项目产物目录和单个 GitHub 仓库，详见 Agent 使用说明。本包不提供完整课程、生产级 AI Gateway、托管工作流或一键部署平台。
 
 ## 维护者验证
 

@@ -1,6 +1,35 @@
 # Publishing Checklist
 
-本清单用于 `ands-nexus` skill 的内部试用、release candidate 准备和公开发布执行检查。本次版本是 `v0.4.6`；发布状态以 [GitHub Release](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6) 为准。较早章节保留历史事实。
+本清单用于 `ands-nexus` skill 的内部试用、release candidate 准备和公开发布执行检查。本分支是 `0.5.0-alpha.2` Hosted Loop 内测原型；当前公开正式版仍为 [v0.4.6](https://github.com/RyanYao527/ands-nexus/releases/tag/v0.4.6)。较早章节保留历史事实。
+
+## 0.5.0-alpha.2 Codex-hosted Loop
+
+- [x] Owner 已批准当前受信任的 Codex 主持 Loop、本地程序管理状态和动作，不新增模型服务；原 native 五轮失败及严格门槛保留。
+- [x] Owner 指定私有合成测试仓库 `RyanYao527/ands-nexus-sandbox` 和负责人 `RyanYao527`；这不代替每条流程的实际计划批准。
+- [ ] `next` / `respond` 请求版本、快照、超时、取消、重放、恢复和预算测试通过；结果按本轮证据记录。
+- [ ] 宿主完成实际规划、生成、新独立审阅和 Lessons；操作者本人完成终端批准/验收，未回复项继续等待。
+- [ ] 真实 GitHub 正常链及失败恢复链完成，远端结果与本地产物可回查；未执行项不计通过。
+- [ ] 本轮安装、双 PowerShell 包检查、程序测试、新 CI 与独立代码复核完成。
+
+Hosted 停止仅撤销请求和阻止控制程序动作，不能终止当前 Codex 会话。当前事实见 [Agent 验证记录](AGENT_VALIDATION.md)。本轮不合并、不公开发布；历史测试和模拟结果不当作本轮真实闭环通过。
+
+## 0.5.0-alpha.1 Internal Agent
+
+以下为前一 alpha 的历史清单；其中“等待路线选择/仓库”的断点已由上文 Owner 决定更新，原失败和未完成项保持原样。
+
+**当前状态：程序及模拟测试已实现，真实 CLI 隔离探针 5 轮均失败，自动 `plan` / `step` / `run` 准入关闭。没有实际生成／交付闭环通过；GitHub 真实写入等待指定测试仓库，未执行。包检查通过只代表机器包检查，不构成自动 Agent 放行。**
+
+- [x] Owner 已选择 Codex 内任务协调与 Markdown 交付、指定本地目录和单个 GitHub 仓库、关键节点终端确认，其余有界推进。
+- [x] 独立分支从 v0.4.6 主线建立；原 Q25 工作区与历史结果保留。
+- [ ] 受限工作进程的结构化生成及工具隔离探针通过（当前 5 轮失败全部保留；严格拒绝工具事件，自动模式关闭）。
+- [ ] 状态、版本批准、实际文件、返工预算、暂停停止与恢复测试通过。
+- [ ] GitHub 模拟边界测试覆盖重复调用、响应丢失、部分成功及操作回查。
+- [ ] Owner 指定真实测试仓库，审阅动作范围后完成正常及恢复两条合成链；未执行时明确记为未运行。
+- [ ] 两个低风险内部文档任务及人的验收记录齐全；没有真人试用时不计通过。
+- [ ] Windows PowerShell / Core 既有包检查、Python 3.11 Windows / Ubuntu 程序测试及对应 CI 通过。
+- [ ] 独立代码复核无未处理阻断，安装及回退说明与实际包一致。
+
+该清单不是 alpha 已通过或正式发布的证明。新模式按实际证据收尾后再决定发布；CI 不执行真实任务写入或自动发布。详见 [Agent 使用说明](ands-nexus/references/agent-workflow.md)。
 
 ## v0.4.6 Student Patch
 

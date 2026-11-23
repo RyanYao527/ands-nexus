@@ -5,9 +5,10 @@
       "name": "references",
       "base_path": "ands-nexus/references",
       "file_type": "md",
-      "expected_count": 11,
+      "expected_count": 12,
       "required_files": [
         "adoption-playbook.md",
+        "agent-workflow.md",
         "demo-trace-guide.md",
         "glossary.md",
         "governance-and-metrics.md",

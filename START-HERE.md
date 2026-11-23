@@ -1,4 +1,22 @@
-# 从这里开始：ANDS Nexus v0.4.6
+# 从这里开始：ANDS Nexus
+
+## Agent 内测入口
+
+**0.5.0-alpha.2 采用 Owner 已批准的 Codex 主持 Loop。** 当前 Codex 会话生成计划、文档和 Lessons，并为审阅请求调用新的独立审阅者；本地程序通过 `next` / `respond` 管理状态及结果。无需新增模型服务，也不启动独立 CLI 探针。旧 `native` 路线的五轮隔离失败保留，不能被称为通过。
+
+开始前查看 [Agent 验证记录](AGENT_VALIDATION.md)，其中分别记录本轮 Hosted Loop、历史隔离失败和尚未完成的实际验收。新路线获准实施不代表真实交付链或 GitHub 操作已经通过。
+
+本分支包含 `0.5.0-alpha.2` Agent 原型，目标环境为 Windows / 当前 Codex。它尚无正式 Release 附件；下面的 v0.4.6 下载段落是稳定版纯提示词流程，不会安装 Agent 程序。
+
+内测从此分支的源码目录安装：先退出旧会话，把旧 `ands-nexus/` 整体移到技能扫描目录之外备份，再将本分支的 `ands-nexus/` 内容复制到新空的 `~/.agents/skills/ands-nexus/`，确认该目录直接包含 `SKILL.md`、`VERSION` 和 `scripts/nexus.py`。不要运行下面要求 `VERSION=0.4.6` 的稳定版安装块来安装 alpha。回退时先移走 alpha，再将备份恢复到不存在的目标目录。
+
+Hosted 模式需要可使用独立审阅者的当前 Codex、Python 3.11；GitHub 操作另需 `gh` 和已有登录。无需安装额外 Python 包。[Agent 使用说明](ands-nexus/references/agent-workflow.md)提供完整 `init → next → respond → 人批准 → next` 操作。运行目录及已批准 GitHub 仓库是操作范围，完整 Vault 和其他仓库不在范围内。
+
+批准、验收、退回或追加预算的命令由人本人在独立终端输入，外层 Codex 不得代执行。终端交互检查不构成人的身份认证，不能把可创建 PTY 误认为可代人批准。
+
+Owner 已指定私有合成联调仓库 `RyanYao527/ands-nexus-sandbox` 及负责人 `RyanYao527`。创建真实 Issues 仍须先展示当前任务计划和动作范围，由 Owner 运行批准命令；尚未收到的批准保持等待。安装本包、启用 skill 或在聊天中展示示例不授予写入权限。
+
+## v0.4.6 稳定版入口
 
 下载 → 安装 → 启用 → 4 步练习 → 反馈。先用一个小型虚构任务，体验如何写清任务、检查证据和留下复盘草稿。
 
@@ -222,4 +240,4 @@ Quick 适合低风险、可回滚、无外部交付的任务；Standard 适合�
 
 Non-Scope: no provider-native validation, no API integration, no credential setup, no tenant connectors, no unattended or automated writeback, no benchmark ranking.
 
-Writeback boundary: user-invoked draft generation to an explicit path is allowed only when explicitly requested. 本包只帮助练习流程和准备草稿，不连接真实系统；明确指定一个本地草稿路径，不等于授权扫描 Vault、自动持久化、GitHub sync、provider workspace 写入或企业系统更新。
+纯提示词模式的 Writeback boundary: user-invoked draft generation to an explicit path is allowed only when explicitly requested. 该流程帮助练习和准备草稿；明确指定一个本地草稿路径，不等于授权扫描 Vault、自动持久化、GitHub sync、provider workspace 写入或企业系统更新。Agent 内测模式另以人批准的计划限定项目文件和单个 GitHub 仓库的操作，见页首入口。
